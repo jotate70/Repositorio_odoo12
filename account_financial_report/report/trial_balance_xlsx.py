@@ -127,6 +127,11 @@ class TrialBalanceXslx(models.AbstractModel):
         Utilidad_suma = 0
         Utilidad_resta = 0
         Utilidad = 0
+        initial_balance_T = 0
+        debit_T = 0
+        credit_T = 0
+        period_balance_T = 0
+        final_balance_T = 0
 
         self.write_array_header()
 
@@ -134,63 +139,63 @@ class TrialBalanceXslx(models.AbstractModel):
         for account in report.account_ids.filtered(lambda a: not a.hide_line):
             # Total compute
             if account.code == '1':
-                initial_balance = account.initial_balance
-                debit = account.debit
-                credit = account.credit
-                period_balance = account.period_balance 
-                final_balance = account.final_balance
+                initial_balance_T = account.initial_balance
+                debit_T = account.debit
+                credit_T = account.credit
+                period_balance_T = account.period_balance 
+                final_balance_T = account.final_balance
             elif account.code == '2':
-                initial_balance = initial_balance + account.initial_balance  
-                debit = debit + account.debit
-                credit = credit + account.credit
-                period_balance = period_balance + account.period_balance 
-                final_balance = final_balance + account.final_balance
+                initial_balance_T = initial_balance_T + account.initial_balance  
+                debit_T = debit_T + account.debit
+                credit_T = credit_T + account.credit
+                period_balance_T = period_balance_T + account.period_balance 
+                final_balance_T = final_balance_T + account.final_balance
             elif account.code == '3':
-                initial_balance = initial_balance + account.initial_balance                      
-                debit = debit + account.debit
-                credit = credit + account.credit
-                period_balance = period_balance + account.period_balance 
-                final_balance = final_balance + account.final_balance
+                initial_balance_T = initial_balance_T + account.initial_balance                      
+                debit_T = debit_T + account.debit
+                credit_T = credit_T + account.credit
+                period_balance_T = period_balance_T + account.period_balance 
+                final_balance_T = final_balance_T + account.final_balance
             elif account.code == '4':
-                initial_balance = initial_balance + account.initial_balance  
-                debit = debit + account.debit
-                credit = credit + account.credit
-                period_balance = period_balance + account.period_balance 
-                final_balance = final_balance + account.final_balance
+                initial_balance_T = initial_balance_T + account.initial_balance  
+                debit_T = debit_T + account.debit
+                credit_T = credit_T + account.credit
+                period_balance_T = period_balance_T + account.period_balance 
+                final_balance_T = final_balance_T + account.final_balance
                 Utilidad_suma = abs(account.final_balance)
             elif account.code == '5':
-                initial_balance = initial_balance + account.initial_balance  
-                debit = debit + account.debit
-                credit = credit + account.credit
-                period_balance = period_balance + account.period_balance 
-                final_balance = final_balance + account.final_balance
+                initial_balance_T = initial_balance_T + account.initial_balance  
+                debit_T = debit_T + account.debit
+                credit_T = credit_T + account.credit
+                period_balance_T = period_balance_T + account.period_balance 
+                final_balance_T = final_balance_T + account.final_balance
                 Utilidad_resta = abs(account.final_balance)
             elif account.code == '6':
-                initial_balance = initial_balance + account.initial_balance  
-                debit = debit + account.debit
-                credit = credit + account.credit
-                period_balance = period_balance + account.period_balance 
-                final_balance = final_balance + account.final_balance
+                initial_balance_T = initial_balance_T + account.initial_balance  
+                debit_T = debit_T + account.debit
+                credit_T = credit_T + account.credit
+                period_balance_T = period_balance_T + account.period_balance 
+                final_balance_T = final_balance_T + account.final_balance
                 Utilidad_resta = Utilidad_resta + abs(account.final_balance)
             elif account.code == '7':
-                initial_balance = initial_balance + account.initial_balance  
-                debit = debit + account.debit
-                credit = credit + account.credit
-                period_balance = period_balance + account.period_balance 
-                final_balance = final_balance + account.final_balance
+                initial_balance_T = initial_balance_T + account.initial_balance  
+                debit_T = debit_T + account.debit
+                credit_T = credit_T + account.credit
+                period_balance_T = period_balance_T + account.period_balance 
+                final_balance_T = final_balance_T + account.final_balance
                 Utilidad_resta = Utilidad_resta + abs(account.final_balance)
             elif account.code == '8':
-                initial_balance = initial_balance + account.initial_balance  
-                debit = debit + account.debit
-                credit = credit + account.credit
-                period_balance = period_balance + account.period_balance 
-                final_balance = final_balance + account.final_balance
+                initial_balance_T = initial_balance_T + account.initial_balance  
+                debit_T = debit_T + account.debit
+                credit_T = credit_T + account.credit
+                period_balance_T = period_balance_T + account.period_balance 
+                final_balance_T = final_balance_T + account.final_balance
             elif account.code == '9':
-                initial_balance = initial_balance + account.initial_balance  
-                debit = debit + account.debit
-                credit = credit + account.credit
-                period_balance = period_balance + account.period_balance 
-                final_balance = final_balance + account.final_balance
+                initial_balance_T = initial_balance_T + account.initial_balance  
+                debit_T = debit_T + account.debit
+                credit_T = credit_T + account.credit
+                period_balance_T = period_balance_T + account.period_balance 
+                final_balance_T = final_balance_T + account.final_balance
             # Print trial balance
             if not report.show_partner_details:
                 # Display account lines
@@ -209,14 +214,14 @@ class TrialBalanceXslx(models.AbstractModel):
         # Total p
         account.code = ''
         account.name = 'TOTAL'
-        account.initial_balance = initial_balance
-        account.debit = debit
-        account.credit = credit
-        account.period_balance = period_balance
-        account.final_balance = final_balance
+        account.initial_balance = initial_balance_T
+        account.debit = debit_T
+        account.credit = credit_T
+        account.period_balance = period_balance_T
+        account.final_balance = final_balance_T
         # printf total trial balance
         self.write_account_footer(account, 
-                                            account.name + '' + ':' )           
+                                            account.name + '' + ':' )          
         # Utilidad
         Utilidad = Utilidad_suma-Utilidad_resta
         partner.code = ''
