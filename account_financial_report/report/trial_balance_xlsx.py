@@ -3,6 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 
+from odoo.tools.sql import set_not_null
 from odoo import _, models 
 from odoo.tools import float_is_zero
 
@@ -124,6 +125,7 @@ class TrialBalanceXslx(models.AbstractModel):
         return 3
 
     def _generate_report_content(self, workbook, report):
+        # Variables 
         Utilidad_suma = 0
         Utilidad_resta = 0
         Utilidad = 0
@@ -132,7 +134,19 @@ class TrialBalanceXslx(models.AbstractModel):
         credit_T = 0
         period_balance_T = 0
         final_balance_T = 0
+        Total = report.account_ids[0]
+        Utilidad_prinf = report.account_ids[0]
+        subtotal1 = report.account_ids[0]
+        subtotal2 = report.account_ids[0]
+        subtotal3 = report.account_ids[0]
+        subtotal4 = report.account_ids[0]
+        subtotal5 = report.account_ids[0]
+        subtotal6 = report.account_ids[0]
+        subtotal7 = report.account_ids[0]
+        subtotal8 = report.account_ids[0]
+        subtotal9 = report.account_ids[0]
 
+        # Header prinft
         self.write_array_header()
 
         # For each account
@@ -144,18 +158,21 @@ class TrialBalanceXslx(models.AbstractModel):
                 credit_T = account.credit
                 period_balance_T = account.period_balance 
                 final_balance_T = account.final_balance
+                subtotal1 = account
             elif account.code == '2':
                 initial_balance_T = initial_balance_T + account.initial_balance  
                 debit_T = debit_T + account.debit
                 credit_T = credit_T + account.credit
                 period_balance_T = period_balance_T + account.period_balance 
                 final_balance_T = final_balance_T + account.final_balance
+                subtotal2 = account
             elif account.code == '3':
                 initial_balance_T = initial_balance_T + account.initial_balance                      
                 debit_T = debit_T + account.debit
                 credit_T = credit_T + account.credit
                 period_balance_T = period_balance_T + account.period_balance 
                 final_balance_T = final_balance_T + account.final_balance
+                subtotal3 = account
             elif account.code == '4':
                 initial_balance_T = initial_balance_T + account.initial_balance  
                 debit_T = debit_T + account.debit
@@ -163,6 +180,7 @@ class TrialBalanceXslx(models.AbstractModel):
                 period_balance_T = period_balance_T + account.period_balance 
                 final_balance_T = final_balance_T + account.final_balance
                 Utilidad_suma = abs(account.final_balance)
+                subtotal4 = account
             elif account.code == '5':
                 initial_balance_T = initial_balance_T + account.initial_balance  
                 debit_T = debit_T + account.debit
@@ -170,6 +188,7 @@ class TrialBalanceXslx(models.AbstractModel):
                 period_balance_T = period_balance_T + account.period_balance 
                 final_balance_T = final_balance_T + account.final_balance
                 Utilidad_resta = abs(account.final_balance)
+                subtotal5 = account
             elif account.code == '6':
                 initial_balance_T = initial_balance_T + account.initial_balance  
                 debit_T = debit_T + account.debit
@@ -177,6 +196,7 @@ class TrialBalanceXslx(models.AbstractModel):
                 period_balance_T = period_balance_T + account.period_balance 
                 final_balance_T = final_balance_T + account.final_balance
                 Utilidad_resta = Utilidad_resta + abs(account.final_balance)
+                subtotal6 = account
             elif account.code == '7':
                 initial_balance_T = initial_balance_T + account.initial_balance  
                 debit_T = debit_T + account.debit
@@ -184,18 +204,21 @@ class TrialBalanceXslx(models.AbstractModel):
                 period_balance_T = period_balance_T + account.period_balance 
                 final_balance_T = final_balance_T + account.final_balance
                 Utilidad_resta = Utilidad_resta + abs(account.final_balance)
+                subtotal7 = account
             elif account.code == '8':
                 initial_balance_T = initial_balance_T + account.initial_balance  
                 debit_T = debit_T + account.debit
                 credit_T = credit_T + account.credit
                 period_balance_T = period_balance_T + account.period_balance 
                 final_balance_T = final_balance_T + account.final_balance
+                subtotal8 = account
             elif account.code == '9':
                 initial_balance_T = initial_balance_T + account.initial_balance  
                 debit_T = debit_T + account.debit
                 credit_T = credit_T + account.credit
                 period_balance_T = period_balance_T + account.period_balance 
                 final_balance_T = final_balance_T + account.final_balance
+                subtotal9 = account
             # Print trial balance
             if not report.show_partner_details:
                 # Display account lines
@@ -211,29 +234,69 @@ class TrialBalanceXslx(models.AbstractModel):
                     # Display partner lines
                     self.write_line(partner, 'partner')
 
+        # Subtotal prinf
+        if subtotal1.code == '1':
+            subtotal1.code = 'SUBTOTAL'
+            self.write_account_footer(subtotal1, 
+                                            '1' + ' - ' + subtotal1.name )
+        if subtotal2.code == '2':                                   
+            subtotal2.code = ''
+            self.write_account_footer(subtotal2, 
+                                            '2' + ' - ' + subtotal2.name )
+        if subtotal3.code == '3':
+            subtotal3.code = ''
+            self.write_account_footer(subtotal3, 
+                                                '3' + ' - ' + subtotal3.name )
+        if subtotal4.code == '4':
+            subtotal4.code = ''
+            self.write_account_footer(subtotal4, 
+                                                '4' + ' - ' + subtotal4.name )
+        if subtotal5.code == '5':
+            subtotal5.code = ''
+            self.write_account_footer(subtotal5, 
+                                                '5' + ' - ' + subtotal5.name )
+        if subtotal6.code == '6':
+            subtotal6.code = ''
+            self.write_account_footer(subtotal6, 
+                                                  '6' + ' - ' + subtotal5.name ) 
+        if subtotal7.code == '7':                                             
+            subtotal7.code = ''
+            self.write_account_footer(subtotal7, 
+                                                '7' + ' - ' + subtotal7.name )
+        if subtotal8.code == '8':                                       
+            subtotal8.code = ''
+            self.write_account_footer(subtotal8, 
+                                                '8' + ' - ' + subtotal8.name  )
+        if subtotal9.code == '9':                                       
+            subtotal9.code = ''
+            self.write_account_footer(subtotal9, 
+                                                '9' + ' - ' + subtotal9.name  )
+        
         # Total p
-        account.code = ''
-        account.name = 'TOTAL'
-        account.initial_balance = initial_balance_T
-        account.debit = debit_T
-        account.credit = credit_T
-        account.period_balance = period_balance_T
-        account.final_balance = final_balance_T
+        Total.code = 'TOTAL:'
+        Total.name = ''
+        Total.initial_balance = initial_balance_T
+        Total.debit = debit_T
+        Total.credit = credit_T
+        Total.period_balance = period_balance_T
+        Total.final_balance = final_balance_T
         # printf total trial balance
-        self.write_account_footer(account, 
-                                            account.name + '' + ':' )          
+        self.write_account_footer(Total, 
+                                            Total.name + '' + '' )
+                                                     
         # Utilidad
+        
         Utilidad = Utilidad_suma-Utilidad_resta
-        partner.code = ''
-        partner.name = 'UTILIDAD'
-        partner.initial_balance = ''
-        partner.debit = ''
-        partner.credit = ''
-        partner.period_balance = ''
-        partner.final_balance = Utilidad
+        Utilidad_prinf.code = 'UTILIDAD:'
+        Utilidad_prinf.name = ''
+        Utilidad_prinf.initial_balance = ''
+        Utilidad_prinf.debit = ''
+        Utilidad_prinf.credit = ''
+        Utilidad_prinf.period_balance = ''
+        Utilidad_prinf.final_balance = Utilidad
         # printf total trial balance
-        self.write_account_footer(partner, 
-                                            partner.name + '' + ':' )
+        self.write_account_footer(Utilidad_prinf, 
+                                            Utilidad_prinf.name + '' + '' )
 
     def write_line(self, line_object, type_object):
         """Write a line on current line using all defined columns field name.
