@@ -39,12 +39,12 @@
                                 <div class="o_setting_right_pane">
                                     <span class="o_form_label">Ponga aquí su API Key</span>
                                     <div class="text-muted">Si no tiene una, escriba a <a href="mailto:info@jorels.com">info@jorels.com</a></div>
-                                    <div class="content-group">
-                                        <div class="row mt16">
-                                            <label for="api_url" class="col-lg-3 o_light_label"/>
-                                            <field name="api_url"/>
-                                        </div>
-                                    </div>
+<!--                                    <div class="content-group">-->
+<!--                                        <div class="row mt16">-->
+<!--                                            <label for="api_url" class="col-lg-3 o_light_label"/>-->
+<!--                                            <field name="api_url"/>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
                                     <div class="content-group">
                                         <div class="row mt16">
                                             <label for="api_key" class="col-lg-3 o_light_label"/>
