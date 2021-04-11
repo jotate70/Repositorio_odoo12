@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Jorels S.A.S. - Copyright (2019-2020)
+# Jorels S.A.S. - Copyright (2019-2021)
 #
 # This file is part of l10n_co_edi_jorels.
 #
@@ -20,17 +20,19 @@
 # email: info@jorels.com
 #
 
-from odoo import api, fields, models, _
-from odoo.exceptions import Warning
-
-import json
-import requests
-
-from pathlib import Path
-
 import logging
 
+from odoo import api, fields, models
+from odoo.exceptions import Warning
+
 _logger = logging.getLogger(__name__)
+
+try:
+    import json
+    import requests
+    from pathlib import Path
+except Exception as err:
+    _logger.debug(err)
 
 
 class Resolution(models.Model):
@@ -39,6 +41,8 @@ class Resolution(models.Model):
     _rec_name = 'name'
 
     name = fields.Char(string="Name", compute='_compute_name')
+
+    resolution_api_sync = fields.Boolean(string="¿Sincronizar con la API?", default=True)
 
     # Range Resolution DIAN
     resolution_type_document_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.type_documents",
@@ -62,31 +66,42 @@ class Resolution(models.Model):
     def _compute_name(self):
         for rec in self:
             rec.name = str(rec.resolution_id) + ' - ' + \
-                rec.resolution_type_document_id.name + ' [' + rec.resolution_type_document_id.code + ']'
+                       rec.resolution_type_document_id.name + ' [' + rec.resolution_type_document_id.code + ']'
 
     @api.model
     def create(self, vals):
-        vals, success = self.post_resolution(vals)
-        if success:
-            return super(Resolution, self).create(vals)
+        if vals['resolution_api_sync']:
+            vals, success = self.post_resolution(vals)
+            if success:
+                return super(Resolution, self).create(vals)
+            else:
+                raise Warning("No se pudo guardar el registro en la API")
         else:
-            raise Warning("No se pudo guardar el registro en la API")
+            return super(Resolution, self).create(vals)
 
     @api.multi
     def write(self, vals):
-        vals, success = self.put_resolution(vals)
-        if success:
-            return super(Resolution, self).write(vals)
-        else:
-            raise Warning("No se pudo actualizar el registro en la API")
+        for rec in self:
+            if rec.resolution_api_sync:
+                vals, success = self.put_resolution(vals)
+                if success:
+                    return super(Resolution, self).write(vals)
+                else:
+                    raise Warning("No se pudo actualizar el registro en la API")
+            else:
+                return super(Resolution, self).write(vals)
 
     @api.multi
     def unlink(self):
-        success = self.delete_resolution()
-        if success:
-            return super(models.Model, self).unlink()
-        else:
-            raise Warning("No se pudo eliminar el registro en la API")
+        for rec in self:
+            if rec.resolution_api_sync:
+                success = self.delete_resolution()
+                if success:
+                    return super(models.Model, self).unlink()
+                else:
+                    raise Warning("No se pudo eliminar el registro en la API")
+            else:
+                return super(models.Model, self).unlink()
 
     # Creación de resolución
     @api.multi

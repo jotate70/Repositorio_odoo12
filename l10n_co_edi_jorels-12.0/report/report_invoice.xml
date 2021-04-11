@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!--Jorels S.A.S. - Copyright (2019-2020)-->
+<!--Jorels S.A.S. - Copyright (2019-2021)-->
 
 <!--This file is part of l10n_co_edi_jorels.-->
 
@@ -25,15 +25,15 @@
             <xpath expr="//t[@t-set='address']" position="replace">
                 <div class="container">
                     <div class="row">
-                        <div t-if="o.ei_is_not_test and o.ei_qr_image" class="col-3">
+                        <div t-if="o.ei_is_not_test and o.ei_qr_data" class="col-3">
                             <!-- With OCA -->
-                            <!-- <img t-att-src="'/report/qr/?value=%s&amp;error_correction=%s' % (o.ei_qr_data, 1)" style="width:100;height:100;"/>-->
+                            <!-- <img t-att-src="'/report/qr/?value=%s&amp;error_correction=%s' % (o.ei_qr_data, 1)" style="width:100;height:100"/>-->
 
                             <!-- With Odoo-->
-                            <!-- <img t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('QR', o.ei_qr_data, 100, 100)"/>-->
+                            <img t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('QR', o.ei_qr_data, 192, 192)"/>
 
                             <!-- With image -->
-                            <span t-field="o.ei_qr_image" t-options="{'widget':'image'}"/>
+                            <!-- <span t-field="o.ei_qr_image" t-options="{'widget':'image'}"/>-->
                         </div>
                         <div class="col-5">
                             <div class="mt16">
@@ -55,7 +55,8 @@
                         </div>
                         <div t-if="not o.ei_is_not_test or not o.ei_qr_image" class="col-3"/>
                         <div class="col-4">
-                            <h4>Cliente</h4>
+                            <h4 t-if="o.type == 'out_invoice' or o.type == 'out_refund'">Cliente</h4>
+                            <h4 t-if="o.type == 'in_invoice' or o.type == 'in_refund'">Proveedor</h4>
                             <div t-if="o.partner_id.vat" class="mt16">
                                 <span t-if="o.partner_id.l10n_co_document_type == 'civil_registration'">R.C.:</span>
                                 <span t-if="o.partner_id.l10n_co_document_type == 'id_card'">T.I.:</span>
@@ -75,30 +76,62 @@
                     </div>
                 </div>
             </xpath>
-            <xpath expr="//table[@name='invoice_line_table']" position="after">
-                <div id="type_currency" class="row">
-                    <div t-attf-class="#{'col-4' if report_type != 'html' else 'col-sm-7 col-md-5'} ml-auto">
-                        <table class="table table-sm" style="page-break-inside: avoid;">
-                            <tr class="border-black" style="">
-                                <td>
-                                    <strong>Moneda</strong>
-                                </td>
-                                <td class="text-right">
-                                    <span t-field="o.currency_id"/>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
+            <xpath expr="//div[@class='page']/h2/span[1]" position="replace">
+                <span t-if="o.ei_is_not_test and o.type == 'out_invoice' and o.state in ('open', 'in_payment', 'paid')">
+                    Electronic Sale Invoice
+                </span>
+                <span t-if="not o.ei_is_not_test and o.type == 'out_invoice' and o.state in ('open', 'in_payment', 'paid')">
+                    Sale Invoice
+                </span>
+            </xpath>
+            <xpath expr="//table[@name='invoice_line_table']/thead/tr/th[1]" position="before">
+                <th class="text-center">
+                    <span>#</span>
+                </th>
+                <t t-set="num_item" t-value="0"/>
+            </xpath>
+            <xpath expr="//t[@name='account_invoice_line_accountable']/td[1]" position="before">
+                <t t-set="num_item" t-value="num_item + 1"/>
+                <td class="text-center">
+                    <span t-esc="num_item"/>
+                </td>
+            </xpath>
+            <xpath expr="//div[@id='total']/div" position="attributes">
+                <attribute name="t-attf-class">#{'col-5' if report_type != 'html' else 'col-sm-7 col-md-5'} ml-auto
+                </attribute>
+            </xpath>
+            <xpath expr="//div[@id='total']/div/table/tr[1]" position="before">
+                <tr class="border-black o_total" style="">
+                    <td>
+                        <strong>Moneda</strong>
+                    </td>
+                    <td class="text-right">
+                        <span t-field="o.currency_id"/>
+                    </td>
+                </tr>
+            </xpath>
+            <xpath expr="//div[@id='total']/div/table/tr[last()]" position="before">
+                <tr class="border-black" style="">
+                    <td>
+                        <strong>Total sin retenciones</strong>
+                    </td>
+                    <td class="text-right">
+                        <span t-field="o.ei_amount_total_no_withholding"/>
+                    </td>
+                </tr>
             </xpath>
             <xpath expr="//div[@class='page']" position="inside">
+                <div t-if="o.value_letters">
+                    <strong>Valor en Letras:</strong>
+                    <span t-field="o.value_letters"/>
+                </div>
                 <div t-if="o.ei_is_not_test" class="container">
                     <div class="row">
                         <div class="col-12">
                             <div class="mt16 text-center">
                                 <div t-if="o.ei_is_valid">
-                                    <strong t-if="o.type == 'out_invoice' and not o.debit_invoice_id">CUFE:</strong>
-                                    <strong t-if="o.type == 'out_invoice' and o.debit_invoice_id">CUDE:</strong>
+                                    <strong t-if="o.type == 'out_invoice' and not o.debit_invoice_id.id">CUFE:</strong>
+                                    <strong t-if="o.type == 'out_invoice' and o.debit_invoice_id.id">CUDE:</strong>
                                     <strong t-if="o.type == 'out_refund'">CUDE:</strong>
                                     <span t-field="o.ei_uuid"/>
                                 </div>
@@ -129,16 +162,6 @@
                         </div>
                     </div>
                 </div>
-            </xpath>
-            <xpath expr="//tr[@class='border-black o_total']" position="before">
-                <tr class="border-black" style="">
-                    <td>
-                        <strong>Total sin retenciones</strong>
-                    </td>
-                    <td class="text-right">
-                        <span t-field="o.ei_amount_total_no_withholding"/>
-                    </td>
-                </tr>
             </xpath>
         </template>
     </data>

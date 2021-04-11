@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Jorels S.A.S. - Copyright (2019-2020)
+# Jorels S.A.S. - Copyright (2019-2021)
 #
 # This file is part of l10n_co_edi_jorels.
 #
@@ -20,9 +20,10 @@
 # email: info@jorels.com
 #
 
+from . import account_product
+from . import account_taxes
+from . import ir_sequence
+from . import uom_uom
 from . import res_company
 from . import res_config_settings
 from . import resolution
-from . import account_taxes
-from . import account_product
-from . import ir_sequence

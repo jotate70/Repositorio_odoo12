@@ -20,14 +20,33 @@
 # email: info@jorels.com
 #
 
+import json
 import logging
 
-from odoo import models
+from odoo import http
+from odoo.http import request
 
 _logger = logging.getLogger(__name__)
 
 
-class TypeLiabilities(models.Model):
-    _name = "l10n_co_edi_jorels.type_liabilities"
-    _inherit = "l10n_co_edi_jorels.languages"
-    _description = "Tipos de responsabilidades"
+class Webhooks(http.Controller):
+
+    @http.route('/l10n_co_edi_jorels/webhook/in_invoice/<company_id>', type='json', auth='public', methods=['POST'],
+                csrf=False)
+    def webhook_in_invoice(self, company_id, **args):
+        # journal_id = 2
+        # partner_id = 1
+        # json_example = {'a': 1, 'b': 2, 'c': '3', 'd': '4'}
+
+        # data = json.loads(request.httprequest.args)
+        data = json.loads(request.httprequest.data)
+
+        # request.env['account.invoice'].sudo().create({
+        #     'partner_id': partner_id,
+        #     'journal_id': journal_id,
+        #     'type': 'in_invoice',
+        #     'comment': data
+        # })
+
+        _logger.debug("webhook_in_invoice: company_id: %s, json: %s", company_id, data)
+        return "Test Ok"

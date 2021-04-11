@@ -21,25 +21,23 @@
 
 <odoo>
     <data>
-        <record id="res_partner_form_view_inherit_l10n_co_edi_jorels" model="ir.ui.view">
-            <field name="name">res.partner.form.inherit.l10n_co_edi_jorels</field>
-            <field name="model">res.partner</field>
-            <field name="inherit_id" ref="base.view_partner_form"/>
+        <record id="product_uom_form" model="ir.ui.view">
+            <field name="name">uom.uom.form</field>
+            <field name="model">uom.uom</field>
+            <field name="inherit_id" ref="uom.product_uom_form_view"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='name']" position="after">
-                    <br/>
-                    <field name="trade_name" placeholder="Nombre comercial"/>
+                    <field name="edi_unit_measure_id"/>
                 </xpath>
-                <xpath expr="//page[last()]" position="after">
-                    <page string="Facturación electrónica">
-                        <group>
-                            <field name="type_regime_id"/>
-                            <field name="type_liability_id"/>
-                            <!--                            <field name="merchant_registration"/>-->
-                            <field name="municipality_id"/>
-                            <field name="email_edi"/>
-                        </group>
-                    </page>
+            </field>
+        </record>
+        <record id="product_uom_tree" model="ir.ui.view">
+            <field name="name">uom.uom.tree</field>
+            <field name="model">uom.uom</field>
+            <field name="inherit_id" ref="uom.product_uom_tree_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="edi_unit_measure_id"/>
                 </xpath>
             </field>
         </record>

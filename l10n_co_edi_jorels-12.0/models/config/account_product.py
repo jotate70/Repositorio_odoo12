@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Jorels S.A.S. - Copyright (2019-2020)
+# Jorels S.A.S. - Copyright (2019-2021)
 #
 # This file is part of l10n_co_edi_jorels.
 #
@@ -20,7 +20,7 @@
 # email: info@jorels.com
 #
 
-from odoo import api, fields, models, tools
+from odoo import fields, models
 
 
 class Product(models.Model):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Jorels S.A.S. - Copyright (2019-2020)
+# Jorels S.A.S. - Copyright (2019-2021)
 #
 # This file is part of l10n_co_edi_jorels.
 #
@@ -21,21 +21,19 @@
 #
 
 import base64
-
-from odoo import api, fields, models, tools
-
-from odoo.exceptions import Warning
-
 import json
-import requests
-
-import qrcode
+import logging
+import math
+import tempfile
+import zipfile
 from io import BytesIO
-
-import zipfile, tempfile
 from pathlib import Path
 
-import logging
+import qrcode
+import requests
+from num2words import num2words
+from odoo import api, fields, models
+from odoo.exceptions import Warning
 
 _logger = logging.getLogger(__name__)
 
@@ -88,6 +86,11 @@ class AccountInvoice(models.Model):
     ei_amount_tax_no_withholding = fields.Monetary("Impuestos sin retenciones", compute="_compute_amount", store=True)
     ei_amount_total_no_withholding = fields.Monetary("Total sin retenciones", compute="_compute_amount", store=True)
 
+    # Total base excluida de impuestos
+    ei_amount_excluded = fields.Monetary("Excluido", compute="_compute_amount", store=True)
+
+    value_letters = fields.Char("Valor en letras", compute="_compute_amount", store=True)
+
     def action_invoice_sent(self):
         self.ensure_one()
         action = super().action_invoice_sent()
@@ -107,14 +110,21 @@ class AccountInvoice(models.Model):
         attachments = self.env['ir.attachment']
 
         if self.type in ('out_invoice', 'out_refund') and self.state in ('open', 'paid'):
-            return attachments.with_context({}).create({
-                'name': filename,
-                'res_model': str(self._name),
-                'res_id': self.id,
-                'datas': file_string,
-                'datas_fname': filename,
-                'type': 'binary',
-            })
+            zip_attachment = self.env['ir.attachment'].search([('res_model', '=', 'account.invoice'),
+                                                               ('res_id', '=', self.id),
+                                                               ('res_field', '=', 'ei_attached_zip_base64_bytes')])[0]
+            if zip_attachment:
+                zip_attachment.name = filename
+                return zip_attachment
+            else:
+                return attachments.with_context({}).create({
+                    'name': filename,
+                    'res_model': str(self._name),
+                    'res_id': self.id,
+                    'datas': file_string,
+                    'datas_fname': filename,
+                    'type': 'binary',
+                })
 
         return attachments
 
@@ -194,8 +204,7 @@ class AccountInvoice(models.Model):
                 document_type_id = values[document_type]
                 if 1 <= document_type_id <= 8:
                     return document_type_id
-            else:
-                return False
+            return False
 
     @api.multi
     def get_ei_customer(self):
@@ -214,7 +223,7 @@ class AccountInvoice(models.Model):
                     if identification_number:
                         name = rec.partner_id.name
                         if rec.partner_id.email_edi:
-                            email_edi = str(rec.partner_id.email_edi)
+                            email_edi = rec.partner_id.email_edi
                         else:
                             raise Warning("El cliente debe tener un correo electrónico donde enviar la factura.\n"
                                           "Agreguelo e intente nuevamente.")
@@ -235,6 +244,9 @@ class AccountInvoice(models.Model):
                             "merchant_registration": 'No tiene'
                         }
 
+                        if rec.partner_id.trade_name:
+                            customer_data['trade_name'] = rec.partner_id.trade_name
+
                         if rec.partner_id.municipality_id:
                             customer_data['municipality_id'] = rec.partner_id.municipality_id.id
                         else:
@@ -250,6 +262,19 @@ class AccountInvoice(models.Model):
                         else:
                             raise Warning("Debe asignarle al cliente un tipo de responsabilidad")
 
+                        if rec.partner_id.phone:
+                            phone = rec.partner_id.phone
+                            if phone[:3] == '+57':
+                                temp_phone = ''.join([i for i in phone[3:] if i.isdigit()])
+                                phone = temp_phone
+                            if phone:
+                                customer_data['phone'] = phone
+
+                        if rec.partner_id.street:
+                            address = rec.partner_id.street.split(',')[0]
+                            if address:
+                                customer_data['address'] = address
+
                         return customer_data
                 else:
                     raise Warning(
@@ -263,11 +288,11 @@ class AccountInvoice(models.Model):
     def get_ei_legal_monetary_totals(self):
         for rec in self:
             line_extension_amount = rec.amount_untaxed
-            tax_exclusive_amount = rec.amount_untaxed
-            tax_inclusive_amount = rec.ei_amount_total_no_withholding
+            tax_exclusive_amount = rec.amount_untaxed - rec.ei_amount_excluded
             allowance_total_amount = 0.0
             charge_total_amount = 0.0
-            payable_amount = tax_inclusive_amount
+            payable_amount = rec.ei_amount_total_no_withholding
+            tax_inclusive_amount = payable_amount - charge_total_amount + allowance_total_amount
 
         return {
             "line_extension_amount": line_extension_amount,
@@ -303,8 +328,12 @@ class AccountInvoice(models.Model):
 
                     products.update({'description': invoice_line_id.name})
 
-                    if invoice_line_id.product_id.edi_unit_measure_id.id:
-                        products.update({'unit_measure_id': invoice_line_id.product_id.edi_unit_measure_id.id}),
+                    if invoice_line_id.product_id.uom_id.edi_unit_measure_id.id:
+                        products.update({'unit_measure_id': invoice_line_id.product_id.uom_id.edi_unit_measure_id.id})
+                    elif invoice_line_id.product_id.edi_unit_measure_id.id:
+                        # Si se usa la configuracion en la unidad de medida de Odoo, entonces este campo no es necesario
+                        # Sin embargo se deja por compatibilidad con campos ya existentes
+                        products.update({'unit_measure_id': invoice_line_id.product_id.edi_unit_measure_id.id})
                     else:
                         raise Warning("Todos los productos deben tener asignada una 'Unidad de medida (DIAN)'.\n"
                                       "Revise, por favor.")
@@ -369,65 +398,90 @@ class AccountInvoice(models.Model):
                     # los impuestos se adjuntan dentro de este json
                     if tax_totals['tax_totals']:
                         invoice_temps.update({'tax_totals': tax_totals['tax_totals']})
+                    else:
+                        invoice_temps.pop("reference_price_id")
 
                     lines.append(invoice_temps)
 
         return lines
-        # [
-        #     {
-        #         "unit_measure_id": 642,
-        #         "invoiced_quantity": 1.000000,
-        #         "line_extension_amount": 500000.00,
-        #         "free_of_charge_indicator": False,
-        #         "allowance_charges": [
-        #             {
-        #                 "charge_indicator": False,
-        #                 "allowance_charge_reason": "Discount",
-        #                 "amount": 0.00,
-        #                 "base_amount": 0.00
-        #             }
-        #         ],
-        #         "tax_totals": [
-        #             {
-        #                 "tax_id": 15,
-        #                 "tax_amount": 0.00,
-        #                 "taxable_amount": 500000.00,
-        #                 "percent": 0.00
-        #             }
-        #         ],
-        #         "description": "Envio de Caja",
-        #         "code": "1002004",
-        #         "type_item_identification_id": 3,
-        #         "price_amount": 500000.00,
-        #         "base_quantity": 1.000000
-        #     }
-        # ]
 
-    # Calculo de las retenciones
+    # Calculo de las retenciones, excluidos, etc
     @api.one
     def _compute_amount(self):
         res = super(AccountInvoice, self)._compute_amount()
 
         amount_tax_withholding = 0
         amount_tax_no_withholding = 0
+        amount_excluded = 0
         for tax_line_id in self.tax_line_ids:
             if tax_line_id.tax_id.edi_tax_id:
                 edi_tax_name = tax_line_id.tax_id.edi_tax_id.name
-                if edi_tax_name[:4] != 'Rete':
-                    amount_tax_no_withholding = amount_tax_no_withholding + tax_line_id.amount_total
-                else:
+                tax_name = tax_line_id.tax_id.name
+                if tax_name == 'IVA Excluido':
+                    amount_excluded = amount_excluded + tax_line_id.base
+                elif edi_tax_name[:4] == 'Rete':
                     amount_tax_withholding = amount_tax_withholding + tax_line_id.amount_total
+                else:
+                    amount_tax_no_withholding = amount_tax_no_withholding + tax_line_id.amount_total
             else:
                 tax_name = tax_line_id.tax_id.name
-                if tax_name[:3] != 'Rte':
-                    amount_tax_no_withholding = amount_tax_no_withholding + tax_line_id.amount_total
-                else:
+                if tax_name == 'IVA Excluido':
+                    amount_excluded = amount_excluded + tax_line_id.base
+                elif tax_name[:3] == 'Rte':
                     amount_tax_withholding = amount_tax_withholding + tax_line_id.amount_total
+                else:
+                    amount_tax_no_withholding = amount_tax_no_withholding + tax_line_id.amount_total
 
         self.ei_amount_tax_withholding = amount_tax_withholding
         self.ei_amount_tax_no_withholding = amount_tax_no_withholding
         self.ei_amount_total_no_withholding = self.amount_untaxed + amount_tax_no_withholding
+        self.ei_amount_excluded = amount_excluded
+
+        # Valor en letras
+        decimal_part, integer_part = math.modf(self.amount_total)
+        if decimal_part:
+            decimal_part = round(decimal_part * math.pow(10, self.currency_id.decimal_places))
+        if integer_part:
+            self.value_letters = num2words(integer_part, lang=self.partner_id.lang).upper() + ' ' + \
+                                 self.currency_id.currency_unit_label.upper()
+            if decimal_part:
+                self.value_letters = self.value_letters + ', ' + \
+                                     num2words(decimal_part, lang=self.partner_id.lang).upper() + ' ' + \
+                                     self.currency_id.currency_subunit_label.upper() + '.'
+
         return res
+
+    @api.multi
+    def get_ei_payment_form(self):
+        for rec in self:
+            payment_forms_env = self.env['l10n_co_edi_jorels.payment_forms']
+
+            if rec.date_invoice and rec.date_due:
+                if rec.date_invoice >= rec.date_due:
+                    # Contado
+                    payment_forms_rec = payment_forms_env.search([('code', '=', '1')])
+                    duration_measure = 0
+                else:
+                    # Credito
+                    payment_forms_rec = payment_forms_env.search([('code', '=', '2')])
+                    duration_measure = (rec.date_due - rec.date_invoice).days
+                payment_due_date = fields.Date.to_string(rec.date_due)
+            else:
+                _logger.debug("La fecha de factura o de pago no son validas")
+                # Contado
+                payment_forms_rec = payment_forms_env.search([('code', '=', '1')])
+                duration_measure = 0
+                payment_due_date = fields.Date.to_string(rec.date_invoice)
+
+            payment_form_id = payment_forms_rec.id
+
+            # Por ahora siempre pones metodo de pago como 'instrumento no definido' [1]
+            return {
+                'payment_form_id': payment_form_id,
+                'payment_method_id': 1,
+                'payment_due_date': payment_due_date,
+                'duration_measure': duration_measure
+            }
 
     @api.multi
     def get_ei_type_document_id(self):
@@ -554,15 +608,18 @@ class AccountInvoice(models.Model):
                         # Factura de venta
                         json_request['legal_monetary_totals'] = self.get_ei_legal_monetary_totals()
                         json_request['invoice_lines'] = self.get_ei_lines()
+                        json_request['payment_forms'] = [self.get_ei_payment_form()]
                     elif type_edi_document == 'credit-note':
                         # Nota credito
                         json_request['legal_monetary_totals'] = self.get_ei_legal_monetary_totals()
                         json_request['credit_note_lines'] = self.get_ei_lines()
+                        json_request['payment_forms'] = [self.get_ei_payment_form()]
                         billing_reference = True
                     elif type_edi_document == 'debit-note':
                         # Nota debito
                         json_request['requested_monetary_totals'] = self.get_ei_legal_monetary_totals()
                         json_request['debit_note_lines'] = self.get_ei_lines()
+                        json_request['payment_forms'] = [self.get_ei_payment_form()]
                         billing_reference = True
                 else:
                     raise Warning("Este tipo de documento no necesita ser enviado a la DIAN")
@@ -583,86 +640,6 @@ class AccountInvoice(models.Model):
                 raise Warning("Este tipo de documento no necesita ser enviado a la DIAN")
 
         return json_request
-
-    # API Response with sync=true:
-    #            {'is_valid': True, 'number': 'XXXXxxxxxxxxx',
-    #            'uuid': 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
-    #            'issue_date': 'xxxx-xx-xx', 'zip_key': '', 'status_code': '00',
-    #            'status_description': 'Procesado Correctamente.',
-    #            'status_message': 'La Factura electrónica XXXXxxxxxxxxx, ha sido autorizada.',
-    #            'xml_file_name': 'xxxxxxxxxxxxxxxx', 'zip_name': 'xxxxxxxxxxxxxxxxxxx.zip',
-    #            'url_acceptance': None, 'url_rejection': None, 'xml_bytes': 'true', 'errors_messages': [[]],
-    #            'qr_data': 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx...',
-    #            'application_response_base64_bytes': 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx...',
-    #            'attached_document_base64_bytes': 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx...',
-    #            'pdf_base64_bytes': 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx...',
-    #            'zip_base64_bytes': 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx...',
-    #            'dian_response_base64_bytes': 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx...'}
-
-    # API Response with sync=false:
-    #            {'is_valid': None, 'number': 'XXXXxxxxxxx',
-    #            'uuid': 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
-    #            'issue_date': 'xxxx-xx-xx', 'zip_key': 'xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxx', 'status_code': None,
-    #            'status_description': '', 'status_message': '', 'xml_file_name': '',
-    #            'zip_name': 'xxxxxxxxxxxxx.zip', 'url_acceptance': None, 'url_rejection': None,
-    #            'xml_bytes': '', 'errors_messages': ['true'],
-    #            'qr_data': 'xxxxxxxxxxxxxxxxxxxxxxxxxx...',
-    #            'application_response_base64_bytes': '', 'attached_document_base64_bytes': None,
-    #            'pdf_base64_bytes': 'xxxxxxxxxxxxxxxxxxxxxxxxxxx...',
-    #            'zip_base64_bytes': 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx...',
-    #            'dian_response_base64_bytes': 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx...'}
-
-    # Json sended:
-    # {
-    #     "number": "xxxxxxxxxxxxxx",
-    #     "type_document_id": 1,
-    #     "sync": true,
-    #     "send": true,
-    #     "customer": {
-    #         "type_document_identification_id": 6,
-    #         "identification_number": "xxxxxxxxx",
-    #         "name": "Cliente de prueba",
-    #         "email": "cliente@example.com",
-    #         "merchant_registration": "No tiene"
-    #     },
-    #     "legal_monetary_totals": {
-    #         "line_extension_amount": 500000.0,
-    #         "tax_exclusive_amount": 500000.0,
-    #         "tax_inclusive_amount": 500000.0,
-    #         "allowance_total_amount": 0.0,
-    #         "charge_total_amount": 0.0,
-    #         "payable_amount": 500000.0
-    #     },
-    #     "invoice_lines": [
-    #         {
-    #             "unit_measure_id": 642,
-    #             "invoiced_quantity": 1.0,
-    #             "line_extension_amount": 500000.0,
-    #             "free_of_charge_indicator": false,
-    #             "allowance_charges": [
-    #                 {
-    #                     "charge_indicator": false,
-    #                     "allowance_charge_reason": "Discount",
-    #                     "amount": 0.0,
-    #                     "base_amount": 0.0
-    #                 }
-    #             ],
-    #             "tax_totals": [
-    #                 {
-    #                     "tax_id": 15,
-    #                     "tax_amount": 0.0,
-    #                     "taxable_amount": 500000.0,
-    #                     "percent": 0.0
-    #                 }
-    #             ],
-    #             "description": "Envio de Caja",
-    #             "code": "1002004",
-    #             "type_item_identification_id": 3,
-    #             "price_amount": 500000.0,
-    #             "base_quantity": 1.0
-    #         }
-    #     ]
-    # }
 
     # TO DO:
     # Se puede hacer más eficiente haciendo que se llame a esta funcion una menor cantidad de veces,
@@ -690,7 +667,7 @@ class AccountInvoice(models.Model):
     @api.multi
     def validate_dian_generic(self, is_test):
         # raise Warning(json.dumps(self.get_json_request(), indent=2, sort_keys=False))
-        # _logger.debug("Request Validación DIAN: %s", json.dumps(self.get_json_request(), indent=2, sort_keys=False))
+        _logger.debug("Request Validación DIAN: %s", json.dumps(self.get_json_request(), indent=2, sort_keys=False))
 
         for rec in self:
             try:
@@ -780,6 +757,18 @@ class AccountInvoice(models.Model):
         self.skip_validate_dian()
 
     @api.multi
+    def is_journal_pos(self):
+        self.ensure_one()
+        try:
+            journal_pos_rec = self.env['pos.config'].search([('invoice_journal_id.id', '=', self.journal_id.id)])
+            if journal_pos_rec:
+                return True
+            else:
+                return False
+        except KeyError:
+            return False
+
+    @api.multi
     def action_invoice_open(self):
         previous_invoice_state_is_draft = False
         if self.filtered(lambda inv: inv.state == 'draft'):
@@ -789,7 +778,10 @@ class AccountInvoice(models.Model):
 
         if previous_invoice_state_is_draft:
             to_open_invoices = self.filtered(lambda inv: inv.state == 'open')
-            if to_open_invoices.filtered(lambda inv: inv.type in ('out_invoice', 'out_refund')):
+
+            if to_open_invoices.filtered(
+                    lambda inv: inv.type in (
+                            'out_invoice', 'out_refund') and not inv.ei_is_valid and not inv.is_journal_pos()):
                 # Entorno
                 to_open_invoices.filtered(
                     lambda inv: inv.write({'ei_is_not_test': inv.env.user.company_id.is_not_test}))
@@ -801,6 +793,8 @@ class AccountInvoice(models.Model):
 
                 if to_open_invoices.filtered(lambda inv: inv.ei_is_not_test):
                     to_open_invoices.validate_dian_generic(False)
+                    if to_open_invoices.filtered(lambda inv: inv.env.user.company_id.enable_mass_send_print):
+                        to_open_invoices.mass_send_print()
                 if to_open_invoices.filtered(lambda inv: not inv.ei_is_not_test):
                     to_open_invoices.validate_dian_generic(True)
 
@@ -853,10 +847,16 @@ class AccountInvoice(models.Model):
     def status_document(self):
         for rec in self:
             try:
+                # Esta linea asegura que se actualicen los campos electrónicos de la factura en Odoo,
+                # antes de la petición
+                requests_data = self.get_json_request()
+                _logger.debug('Customer data: %s', requests_data)
+
                 type_edi_document = self.get_type_edi_document()
                 if type_edi_document != 'none':
                     if rec.ei_uuid:
                         requests_data = {"refresh_pdf": True}
+                        _logger.debug('API Requests: %s', requests_data)
 
                         if self.env.user.company_id.api_key:
                             token = self.env.user.company_id.api_key

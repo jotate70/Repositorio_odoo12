@@ -20,14 +20,4 @@
 # email: info@jorels.com
 #
 
-import logging
-
-from odoo import models
-
-_logger = logging.getLogger(__name__)
-
-
-class TypeLiabilities(models.Model):
-    _name = "l10n_co_edi_jorels.type_liabilities"
-    _inherit = "l10n_co_edi_jorels.languages"
-    _description = "Tipos de responsabilidades"
+from . import main

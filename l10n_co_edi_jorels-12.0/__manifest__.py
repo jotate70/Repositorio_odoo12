@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Jorels S.A.S. - Copyright (2019-2020)
+# Jorels S.A.S. - Copyright (2019-2021)
 #
 # This file is part of l10n_co_edi_jorels.
 #
@@ -35,7 +35,6 @@
     # Odoo, OCA and Jorels dependencies
     'depends': [
         'account',
-        # 'snailmail_account',
         'l10n_co',
         'web_notify',
         'update_from_csv',
@@ -49,17 +48,21 @@
         'views/config/res_config_settings_views.xml',
         'views/config/resolution_views.xml',
         'views/config/ir_sequence.xml',
-        'views/config/account_product_view.xml',
+        'views/config/uom_uom_views.xml',
         'views/config/account_taxes_view.xml',
         'views/account_invoice_view.xml',
         'views/res_partner_view.xml',
         'report/report_invoice.xml',
         'data/mail_template_data.xml',
     ],
-    # 'external_dependencies': {
-    #        'python': [
-    #        ]
-    #    },
+    'external_dependencies': {
+           'python': [
+               'num2words',
+               'pathlib',
+               'qrcode',
+               'requests',
+           ]
+       },
     'installable': True,
     'application': False,
 }

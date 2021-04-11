@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!--Jorels S.A.S. - Copyright (2019-2020)-->
+<!--Jorels S.A.S. - Copyright (2019-2021)-->
 
 <!--This file is part of l10n_co_edi_jorels.-->
 
@@ -41,7 +41,7 @@
                             class="o_invoice_validate" groups="base.group_no_one"
                             attrs="{'invisible': [('state','!=','validate')]}"/>
                     <button name="status_document" type="object" string="Consultar DIAN" groups="base.group_no_one"
-                            attrs="{'invisible': [('state','!=','open')]}"/>
+                            attrs="{'invisible': [('state','!=','open'),('state','!=','paid')]}"/>
                 </xpath>
                 <!--                <xpath expr="//field[@name='state']" position="replace">-->
                 <!--                    <field name="state" widget="statusbar" nolabel="1" statusbar_visible="draft,validate,open,paid"/>-->

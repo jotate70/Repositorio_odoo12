@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Jorels S.A.S. - Copyright (2019-2020)
+# Jorels S.A.S. - Copyright (2019-2021)
 #
 # This file is part of l10n_co_edi_jorels.
 #
@@ -20,14 +20,13 @@
 # email: info@jorels.com
 #
 
-from odoo import api, fields, models, _
-from odoo.exceptions import Warning
-
 import json
-import requests
+import logging
 from pathlib import Path
 
-import logging
+import requests
+from odoo import api, fields, models
+from odoo.exceptions import Warning
 
 _logger = logging.getLogger(__name__)
 
@@ -38,7 +37,7 @@ class ResConfigSettings(models.TransientModel):
     # Api key
     api_key = fields.Char(related="company_id.api_key", string="Api key", readonly=False)
     api_url = fields.Char(related="company_id.api_url", string="Api url", readonly=False,
-                          default='https://jorels.apifacturacionelectronica.xyz')
+                          default='https://lion-consulting.apifacturacionelectronica.xyz')
 
     # Software
     software_id = fields.Char(related="company_id.software_id", string="Software Id", readonly=False)
@@ -59,6 +58,9 @@ class ResConfigSettings(models.TransientModel):
     enable_validate_state = fields.Boolean(related="company_id.enable_validate_state",
                                            string="Estado internedio Validación DIAN",
                                            default=True, readonly=False)
+    enable_mass_send_print = fields.Boolean(related="company_id.enable_mass_send_print",
+                                            string="Email automatico de la factura al validar(En producción)",
+                                            default=False, readonly=False)
 
     # Report
     report_custom_text = fields.Html(related="company_id.report_custom_text", string="Custom text", readonly=False)
@@ -170,19 +172,21 @@ class ResConfigSettings(models.TransientModel):
                 _logger.debug('API Response: %s', response)
 
                 # No es posible comprobar la firma digital, ni el password
-                if 'id' in response:
-                    if 'name' in response:
-                        rec.certificate_message = "El nombre del certificado actualmente almacenado en la API es: " + \
-                                                  response['name']
-                    else:
-                        rec.certificate_message = "No se ha encontrado un certificado. " \
-                                                  "¡Suba uno o Intente nuevamente!"
-                elif 'message' in response:
+                if 'message' in response:
                     if response['message'] == 'Unauthenticated.' or response['message'] == '':
                         rec.certificate_message = 'No es posible la autenticación con la API. ' \
                                                   'Revise su Api key e intente nuevamente.'
                     else:
                         rec.certificate_message = response['message']
+                elif 'is_valid' in response:
+                    if response['is_valid']:
+                        if 'organization' in response:
+                            rec.certificate_message = "Certificado valido para la empresa: " + response['organization']
+                        else:
+                            rec.certificate_message = "Certificado valido en servidor"
+                    else:
+                        rec.certificate_message = "No se ha encontrado un certificado. " \
+                                                  "¡Suba uno o Intente nuevamente!"
                 else:
                     rec.certificate_message = 'Algo sucede. No es posible comunicarse con la API'
 
@@ -357,6 +361,7 @@ class ResConfigSettings(models.TransientModel):
                     if not resolution_search:
                         self._cr.execute(
                             "INSERT INTO l10n_co_edi_jorels_resolution (" \
+                            "resolution_api_sync," \
                             "resolution_type_document_id," \
                             "resolution_prefix," \
                             "resolution_resolution," \
@@ -373,7 +378,7 @@ class ResConfigSettings(models.TransientModel):
                             "create_date," \
                             "write_uid," \
                             "write_date" \
-                            ") VALUES (%d, '%s', NULLIF('%s','None'), %s, NULLIF('%s','None'), %d, %d, %s, %s, %d, %d, '%s', %d, %s, %d, %s)" %
+                            ") VALUES (TRUE, %d, '%s', NULLIF('%s','None'), %s, NULLIF('%s','None'), %d, %d, %s, %s, %d, %d, '%s', %d, %s, %d, %s)" %
                             (
                                 resolution['type_document_id'],
                                 resolution['prefix'],

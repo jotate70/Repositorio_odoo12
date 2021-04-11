@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!--Jorels S.A.S. - Copyright (2019-2020)-->
+<!--Jorels S.A.S. - Copyright (2019-2021)-->
 
 <!--This file is part of l10n_co_edi_jorels.-->
 
@@ -26,6 +26,12 @@
             <field name="model">res.company</field>
             <field name="inherit_id" ref="base.view_company_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//div[@class='oe_title']" position="inside">
+                    <label for="trade_name" attrs="{'invisible': ['|', ('trade_name', '=', False), ('trade_name', '=', '')]}"/>
+                    <h2>
+                        <field name="trade_name" placeholder="Nombre comercial"/>
+                    </h2>
+                </xpath>
                 <xpath expr="//page[last()]" position="after">
                     <page string="Facturación electrónica">
                         <group>

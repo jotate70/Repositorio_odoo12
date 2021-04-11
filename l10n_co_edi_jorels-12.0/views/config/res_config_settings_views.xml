@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!--Jorels S.A.S. - Copyright (2019-2020)-->
+<!--Jorels S.A.S. - Copyright (2019-2021)-->
 
 <!--This file is part of l10n_co_edi_jorels.-->
 
@@ -38,13 +38,15 @@
                                 <div class="o_setting_left_pane"/>
                                 <div class="o_setting_right_pane">
                                     <span class="o_form_label">Ponga aquí su API Key</span>
-                                    <div class="text-muted">Si no tiene una, escriba a <a href="mailto:info@jorels.com">info@jorels.com</a></div>
-<!--                                    <div class="content-group">-->
-<!--                                        <div class="row mt16">-->
-<!--                                            <label for="api_url" class="col-lg-3 o_light_label"/>-->
-<!--                                            <field name="api_url"/>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
+                                    <div class="text-muted">Si no tiene una, escriba a
+                                        <a href="mailto:info@jorels.com">info@jorels.com</a>
+                                    </div>
+                                    <!--                                    <div class="content-group">-->
+                                    <!--                                        <div class="row mt16">-->
+                                    <!--                                            <label for="api_url" class="col-lg-3 o_light_label"/>-->
+                                    <!--                                            <field name="api_url"/>-->
+                                    <!--                                        </div>-->
+                                    <!--                                    </div>-->
                                     <div class="content-group">
                                         <div class="row mt16">
                                             <label for="api_key" class="col-lg-3 o_light_label"/>
@@ -160,7 +162,8 @@
                                     <field name="enable_validate_state"/>
                                 </div>
                                 <div class="o_setting_right_pane">
-                                    <label string="Habilitar estado intermedio Validación DIAN" for="enable_validate_state"/>
+                                    <label string="Habilitar estado intermedio Validación DIAN"
+                                           for="enable_validate_state"/>
                                     <div class="text-muted">Opciones avanzadas de envío y pruebas</div>
                                 </div>
                             </div>
@@ -179,6 +182,16 @@
                                             <field name="report_custom_text"/>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-6 o_setting_box">
+                                <div class="o_setting_left_pane">
+                                    <field name="enable_mass_send_print"/>
+                                </div>
+                                <div class="o_setting_right_pane">
+                                    <label string="Email automatico de la factura al validar(En producción)"
+                                           for="enable_mass_send_print"/>
+                                    <div class="text-muted">Requiere del modulo: Account Invoice Mass Sending</div>
                                 </div>
                             </div>
                         </div>

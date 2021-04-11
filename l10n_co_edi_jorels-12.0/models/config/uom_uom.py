@@ -20,14 +20,11 @@
 # email: info@jorels.com
 #
 
-import logging
-
-from odoo import models
-
-_logger = logging.getLogger(__name__)
+from odoo import fields, models
 
 
-class TypeLiabilities(models.Model):
-    _name = "l10n_co_edi_jorels.type_liabilities"
-    _inherit = "l10n_co_edi_jorels.languages"
-    _description = "Tipos de responsabilidades"
+class ProductUom(models.Model):
+    _inherit = "uom.uom"
+
+    edi_unit_measure_id = fields.Many2one(comodel_name='l10n_co_edi_jorels.unit_measures',
+                                          string="Unidad de medida (DIAN)")
