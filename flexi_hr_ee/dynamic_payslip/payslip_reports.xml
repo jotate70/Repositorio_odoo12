@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <report
+            id="dynamic_payslip_report_aspl"
+            model="wizard.dynamic.payslip"
+            string="Dynamic Payslip"
+            report_type="qweb-pdf"
+            name="flexi_hr_ee.dynamic_payslip_report"
+            file="flexi_hr_ee.dynamic_payslip_report"
+            menu="False"
+        />
+
+        <record id="paperformat_dynamic_payslip" model="report.paperformat">
+            <field name="name">Dynamic Payslip Paper Format</field>
+            <field name="default" eval="True" />
+            <field name="format">custom</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">30</field>
+            <field name="margin_bottom">23</field>
+            <field name="margin_left">7</field>
+            <field name="margin_right">7</field>
+            <field name="header_line" eval="False" />
+            <field name="header_spacing">30</field>
+            <field name="report_ids" eval="[(6,0,[ref('flexi_hr_ee.dynamic_payslip_report_aspl')])]"/>
+        </record>
+
+    </data>
+</odoo>

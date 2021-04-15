@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<odoo>
+<data>
+
+    <record id="pre_seq_emp_entry_number" model="ir.sequence">
+        <field name="name">Employee Entry Form No.</field>
+        <field name="code">employee.entry.form.no</field>
+        <field name="prefix">ENTRY: %(year)s-%(month)s-%(day)s-</field>
+        <field name="padding">3</field>
+    </record>
+
+    <record id="pre_seq_emp_exit_number" model="ir.sequence">
+        <field name="name">Employee Exit Form Number</field>
+        <field name="code">employee.exit.form.number</field>
+        <field name="prefix">EXIT: %(year)s-%(month)s-%(day)s-</field>
+        <field name="padding">3</field>
+    </record>
+
+</data>
+</odoo>

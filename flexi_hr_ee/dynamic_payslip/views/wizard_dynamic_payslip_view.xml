@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+		<record id="payslip_design_form_view" model="ir.ui.view">
+			<field name="name">Pay slip Design</field>
+			<field name="model">payslip.page.label.design</field>
+			<field name="arch" type="xml">
+				<form string="Payslip Design">
+					<sheet>
+						<group col="4">
+							<field name="name" />
+							<field name="report_model" />
+						</group>
+						<notebook>
+							<page string="Design">
+								<field name="page_template_design" />
+							</page>
+							<page string="Format Details">
+								<group col="4">
+									<field name="format" />
+									<field name="margin_top" />
+									<field name="margin_left" />
+									<field name="margin_bottom" />
+									<field name="margin_right" />
+									<field name="orientation" />
+									<field name="dpi" />
+								</group>
+							</page>
+						</notebook>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record id="payslip_design_tree_view" model="ir.ui.view">
+			<field name="name">Pay Slip Design</field>
+			<field name="model">payslip.page.label.design</field>
+			<field name="arch" type="xml">
+				<tree string="Payslip Design">
+					<field name="name" />
+				</tree>
+			</field>
+		</record>
+
+		<record id="action_payslip_design_view" model="ir.actions.act_window">
+			<field name="name">Payslip Design</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">payslip.page.label.design</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+
+		<menuitem id="main_dynamic_payslip_menu" parent="hr_payroll.menu_hr_payroll_root"
+			name="Dynamic Payslip" groups="hr.group_hr_manager"/>
+		<menuitem id="menu_payslip_design_main" string="Payslip Design"
+			parent="main_dynamic_payslip_menu" action="action_payslip_design_view"
+			sequence="5" />
+
+		<record id="dynamic_payslip_form_wizard" model="ir.ui.view">
+			<field name="name">Dynamic Payslip</field>
+			<field name="model">wizard.dynamic.payslip</field>
+			<field name="arch" type="xml">
+				<form string="Dynamic payslip">
+					<group col="4">
+						<field name="department_ids" widget="many2many_tags"
+							options="{'no_create_edit': True}" />
+						<field name="employee_ids" widget="many2many_tags" options="{'no_create_edit': True}"
+							domain="[('department_id', 'in', department_ids)]" />
+						<newline />
+<!-- 						<label string="From Month/Year" /> -->
+						<div class="address_format">
+							<field name="from_month" style="width: 80%" required="1" />
+							<field name="from_year" style="width: 80%" required="1" />
+						</div>
+<!-- 						<label string="To Month/Year" /> -->
+						<div class="address_format">
+							<field name="to_month" style="width: 80%" required="1" />
+							<field name="to_year" style="width: 80%" required="1" />
+						</div>
+						<field name="paper_format_id" />
+						<field name="design_id" required="1" />
+					</group>
+					<group>
+						<group>
+							<field name="watermark_type" />
+							<field name="watermark_text"
+								attrs="{'invisible': ['|', ('watermark_type', '=', 'image'), ('watermark_type', '=', False)],
+									'required': [('watermark_type', '=', 'text')]}" />
+							<field name="watermark_image"
+								attrs="{'invisible': ['|', ('watermark_type', '=', 'text'), ('watermark_type', '=', False)],
+									'required': [('watermark_type'), '=', 'image']}" />
+						</group>
+					</group>
+					<notebook>
+						<page string="Page">
+							<group>
+								<group>
+									<field name="format" />
+									<field name="orientation"
+										attrs="{'required': [('paper_format_id', '!=', False)]}" />
+									<field name="dpi" />
+								</group>
+								<group>
+									<field name="margin_top" />
+									<field name="margin_left" />
+									<field name="margin_bottom" />
+									<field name="margin_right" />
+									<field name="header_spacing" />
+								</group>
+							</group>
+						</page>
+						<page string="Template">
+							<field name="column_report_design" />
+						</page>
+					</notebook>
+					<footer>
+						<button name="action_print" string="Print" type="object"
+							class="oe_highlight" />
+						or
+						<button string="Cancel" class="oe_link" special="cancel" />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<record id="action_dynamic_payslip_form_wizard_aspl" model="ir.actions.act_window">
+			<field name="name">Dynamic Payslip</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">wizard.dynamic.payslip</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="dynamic_payslip_form_wizard" />
+			<field name="target">new</field>
+		</record>
+
+		<menuitem id="menu_hr_payroll_dynamic_payslip" name="Dynamic Payslip Report"
+			parent="main_dynamic_payslip_menu" string="Dynamic Payslip"
+			action="action_dynamic_payslip_form_wizard_aspl" sequence="10" />
+	</data>
+</odoo>

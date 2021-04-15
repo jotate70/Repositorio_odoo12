@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+	
+		<record id="hr.open_view_employee_list_my" model="ir.actions.act_window">
+            <field name="name">Employees</field>
+            <field name="res_model">hr.employee</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{'search_default_not_ex_employee': 1}</field>
+            <field name="view_id" eval="False"/>
+            <field name="search_view_id" ref="hr.view_employee_filter"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to add a new employee.
+              </p><p>
+                With just a quick glance on the Odoo employee screen, you
+                can easily find all the information you need for each person;
+                contact data, job position, availability, etc.
+              </p>
+            </field>
+        </record>
+		
+	
+<!-- 		<record model="ir.ui.view" id="hr_employee_search_view_aspl"> -->
+<!-- 			<field name="name">HR Employee Search View</field> -->
+<!-- 			<field name="model">hr.employee</field> -->
+<!-- 			<field name="inherit_id" ref="hr.view_employee_filter"/> -->
+<!-- 			<field name="arch" type="xml"> -->
+<!-- 				<xpath expr="//field[@name='department_id']" position="after"> -->
+<!-- 					<filter name="not_ex_employee" string="Current Employee" domain="[('employee_status','!=','ex_emp')]"/> -->
+<!-- 					<filter string="Trainee" domain="[('employee_status','=','trainee')]"/> -->
+<!-- 					<filter string="On Probation period" domain="[('employee_status','=','on_probation_period')]"/> -->
+<!-- 					<filter string="Employed" domain="[('employee_status','=','emp')]"/> -->
+<!-- 					<filter string="On Notice Period" domain="[('employee_status','=','on_notice_period')]"/> -->
+<!-- 	            </xpath> -->
+<!-- 			</field> -->
+<!-- 		</record> -->
+
+		<record id="aspl_checklist_hr_employee_inherit_form_view"
+			model="ir.ui.view">
+			<field name="name">HR Employee</field>
+			<field name="model">hr.employee</field>
+			<field name="inherit_id" ref="hr.view_employee_form" />
+			<field name="arch" type="xml">
+				<xpath expr="//form/sheet" position="before">
+					<header>
+						<field name="employee_status" widget="statusbar" nolable="1"/>
+					</header>
+				</xpath>	
+				<xpath expr="//form/sheet//div/button[@name='toggle_active']"
+					position="after">
+					<button name="stock_quant_redirect" string="Resources" type="object"
+						class="oe_stat_button" icon="fa-bullseye" />
+					<button name="%(action_main_product_allocation_wiz_menu)d"
+						string="Add Resources" type="action" class="oe_stat_button" icon="fa-plus"
+						context="{'default_employee_id': id}" />
+				</xpath>
+				<xpath expr="//field[@name='user_id']" position="after">
+<!-- 					<field name="employee_status" readonly="1" -->
+<!-- 						groups="hr.group_hr_manager, base.group_erp_manager" /> -->
+					<field name="notice_period" readonly="1"
+						attrs="{'invisible': [('employee_status', '!=', 'on_notice_period')]}" />
+					<field name="exit_initiated" invisible="1"/>
+					<button name="emp_exit_form" type="object" string="Exit Process"
+						class="oe_highlight" attrs="{'invisible': [('exit_initiated', '=', True)]}" />
+				</xpath>
+			</field>
+		</record>
+
+	</data>
+</odoo>

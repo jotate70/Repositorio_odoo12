@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+		<template id="dynamic_payslip_report">
+			<t t-call="web.html_container">
+				<t t-foreach="doc_ids" t-as="o">
+					<t t-call="web.external_layout">
+						<div class="page">
+							<t t-foreach="summary_emp(o)" t-as="emp">
+								<br/>
+								<center><h2>Pay Slip</h2></center>
+								<t t-foreach="emp_value" t-as="emp_val">
+									<table class="table table-condensed table-bordered">
+										<tr>
+											<td><strong>Name</strong></td>
+											<td><span t-esc="emp_val['employee_id'].name" /></td>
+											<td><strong>Designation</strong></td>
+											<td><span t-esc="emp_val['employee_id'].job_id.name" /></td>
+										</tr>
+										<tr>
+				                            <td><strong>Date From</strong></td>
+				                            <td><span t-esc="emp_val['date_from']"/></td>
+				                            <td><strong>Date To</strong></td>
+				                            <td><span t-esc="emp_val['date_to']"/></td>
+				                        </tr>
+									</table>
+									<!-- Salary Computation fields can be managed from here. -->
+									<t t-if="emp_val['line_ids']">
+										<strong>Salary Computation</strong>
+										<table class="table table-condensed table-bordered">
+											<tr>
+												<td>Name</td>
+												<td>Code</td>
+												<td>Category</td>
+												<td>Quantity</td>
+												<td>Rate (%)</td>
+												<td>Rule</td>
+												<td>Amount</td>
+												<td>Total</td>
+											</tr>
+											<tr t-foreach="emp_val['line_ids']" t-as="line">
+												<td><span t-field="line.name" /></td>
+												<td><span t-field="line.code" /></td>
+												<td><span t-field="line.category_id.name" /></td>
+												<td><span t-field="line.quantity" /></td>
+												<td><span t-field="line.rate" /></td>
+												<td><span t-field="line.salary_rule_id.name" /></td>
+												<td><span t-field="line.amount" /></td>
+												<td><span t-field="line.total" /></td>										
+											</tr>
+										</table>
+									</t>
+								</t>
+								<!-- You can change the arguments for Watermark here -->
+								<t t-if="get_date(o)[3] == 'text'">
+									<p style="color:red;font-size:120px;transform:rotate(300deg);-webkit-transform:rotate(300deg);opacity:0.25;">
+										<span t-esc="get_date(o)[2]"/>
+									</p>
+								</t> 
+								<t t-if="get_date(o)[3] == 'image'">
+									<div style="color: #593e3e;-webkit-transform:rotate(300deg);transform:rotate(300deg);opacity:0.25;background-position:center;">
+										<t t-set="image" t-value="get_date(o)[2]"/>
+										<img t-att-src="'data:image/png;base64,%s' % to_text(image)"/>
+									</div>
+								</t>
+								<p style="page-break-before:always;"> </p>
+							</t>
+						</div>
+					</t>
+				</t>
+			</t>
+		</template>
+
+	</data>
+</odoo>

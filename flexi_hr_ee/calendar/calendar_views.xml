@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+
+		<record id="view_calendar_event_form_popup_custom" model="ir.ui.view">
+			<field name="name">calendar.event.form</field>
+			<field name="model">hr.employee.meeting</field>
+			<field name="priority" eval="2" />
+			<field name="arch" type="xml">
+				<form string="Meetings">
+					<group>
+						<group>
+							<field name="start_date" string="Starting at" />
+							<field name="employee_id"/>
+							<field name="start_datetime" string="Starting at" />
+							<label for="duration" />
+							<div>
+								<field name="duration" widget="float_time" class="oe_inline" />
+								<span> hours</span>
+							</div>
+							<field name="employee_ids" widget="many2many_tags" string="Attendees" />
+						</group>
+						<group>
+							<field name="location" />
+							<field name="categ_ids" widget="many2many_tags" />
+						</group>
+					</group>
+				</form>
+			</field>
+		</record>
+
+		<record id="view_calendar_event_calendar_custom" model="ir.ui.view">
+			<field name="name">hr.employee.meeting.calendar</field>
+			<field name="model">hr.employee.meeting</field>
+			<field name="priority" eval="2"/>
+			<field name="arch" type="xml">
+				<calendar string="Meetings" date_start="start"
+					date_stop="stop" date_delay="duration" all_day="allday"
+					readonly_form_view_id="%(flexi_hr_ee.view_calendar_event_form_popup_custom)s"
+					event_open_popup="true" event_limit="3" color="employee_id">
+					<field name="name" />
+					<field name="employee_ids" write_model="calendar.contacts.custom" write_field="employee_id" avatar_field="image_small"/>
+                    <field name="is_highlighted"/>
+				</calendar>
+			</field>
+		</record>
+
+        <record id="employee_meeting_tree_view" model="ir.ui.view">
+            <field name="name">calendar.event.tree</field>
+            <field name="model">hr.employee.meeting</field>
+            <field name="arch" type="xml">
+                <tree string="Meetings" create="0" edit="0" delete="0">
+                    <field name="name" string="Subject" />
+                    <field name="allday" invisible="True" />
+                    <field name="start" string="Start Date" />
+                    <field name="stop" string="End Date" />
+                    <field name="location" />
+                    <field name="duration" />
+                </tree>
+            </field>
+        </record>
+
+		<record id="view_calendar_event_tree_custom" model="ir.ui.view">
+			<field name="name">calendar.event.tree</field>
+			<field name="model">hr.employee.meeting</field>
+			<field name="arch" type="xml">
+				<tree string="Meetings">
+					<field name="name" string="Subject" />
+					<field name="allday" invisible="True" />
+					<field name="start" string="Start Date" />
+					<field name="stop" string="End Date" />
+					<field name="employee_ids" />
+					<field name="location" />
+					<field name="duration" />
+				</tree>
+			</field>
+		</record>
+
+		<record id="view_calendar_event_form_custom" model="ir.ui.view">
+			<field name="name">calendar.event.form</field>
+			<field name="model">hr.employee.meeting</field>
+			<field name="priority" eval="1" />
+			<field name="arch" type="xml">
+				<form string="Meetings">
+					<sheet>
+						<div class="oe_title">
+							<div class="oe_edit_only">
+								<label for="name" />
+							</div>
+							<h1>
+								<field name="name" placeholder="e.g. Business Lunch" />
+							</h1>
+							<!-- <field name="employee_id"/> -->
+							<label for="employee_ids" string="Attendees" class="oe_edit_only" />
+							<h2>
+								<field name="employee_ids" widget="many2many_tags"
+									placeholder="Select attendees..." class="oe_inline" />
+							</h2>
+						</div>
+						<notebook>
+							<page name="page_details" string="Meeting Details">
+								<group>
+									<group>
+										<field name="start" attrs="{'invisible': True}" />
+										<field name="stop" attrs="{'invisible': True}" />
+										<field name="id" attrs="{'invisible': True}" />
+
+										<field name="start_date" string="Starting at"
+											attrs="{'invisible': [('allday','=',False)], 'readonly': [('id', '!=', False)]}" />
+										<field name="stop_date" string="Ending at"
+											attrs="{'invisible': [('allday','=',False)], 'readonly': [('id', '!=', False)]}" />
+
+										<field name="start_datetime" string="Starting at"
+											attrs="{'invisible': [('allday','=',True)], 'readonly': [('id', '!=', False)]}" />
+										<field name="stop_datetime" invisible="1" />
+										<label for="duration" attrs="{'invisible': [('allday','=',True)]}" />
+										<div attrs="{'invisible': [('allday','=',True)]}">
+											<field name="duration" widget="float_time" string="Duration"
+												class="oe_inline" attrs="{'readonly': [('id', '!=', False)]}" />
+											<span> hours</span>
+										</div>
+										<field name="allday" attrs="{'readonly': [('id', '!=', False)]}" />
+									</group>
+									<group>
+										<field name="user_id" />
+										<field name="categ_ids" widget="many2many_tags"
+											options="{'no_create_edit': True}" />
+										<field name="location" />
+									</group>
+
+								</group>
+								<label for="description" />
+								<field name="description" />
+							</page>
+						</notebook>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+
+		<record id="action_calendar_event_custom_aspl" model="ir.actions.act_window">
+			<field name="name">Meetings</field>
+			<field name="res_model">hr.employee.meeting</field>
+			<field name="view_mode">tree,form</field>
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">
+					Click to schedule a new meeting.
+				</p>
+				<p>
+					The calendar is shared between employees and fully integrated
+					with
+					other applications such as the employee leaves or the business
+					opportunities.
+				</p>
+			</field>
+		</record>
+
+<!-- 		<record id="action_view_calendar_event_calendar" model="ir.actions.act_window.view"> -->
+<!-- 		<field name="act_window_id" ref="action_calendar_event_custom_aspl" /> -->
+<!-- 		<field name="sequence" eval="1" /> -->
+<!-- 		<field name="view_mode">calendar</field> -->
+<!-- 		<field name="view_id" ref="view_calendar_event_calendar_custom" /> -->
+<!-- 		</record> -->
+
+		<record id="action_view_calendar_event_tree" model="ir.actions.act_window.view">
+		<field name="act_window_id" ref="action_calendar_event_custom_aspl" />
+		<field name="sequence" eval="1" />
+		<field name="view_mode">tree</field>
+		<field name="view_id" ref="view_calendar_event_tree_custom" />
+		</record>
+
+		<record id="action_view_calendar_event_form_aspl" model="ir.actions.act_window.view">
+		<field name="act_window_id" ref="action_calendar_event_custom_aspl" />
+		<field name="sequence" eval="2" />
+		<field name="view_mode">form</field>
+		<field name="view_id" ref="view_calendar_event_form_custom" />
+		</record>
+
+		<menuitem name="Employee Meetings" id="menu_hr_employee_meetings"
+			parent="hr.menu_hr_root" action="action_calendar_event_custom_aspl" groups="hr.group_hr_manager"/>
+
+		<record id="action_calendar_event_from_employee_form" model="ir.actions.act_window">
+			<field name="name">Meetings</field>
+			<field name="res_model">hr.employee.meeting</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_type">form</field>
+			<field name="domain">[]</field>
+		</record>
+
+		<record id="hr_employee_form_view_from_meeting"
+			model="ir.ui.view">
+			<field name="name">HR Employee</field>
+			<field name="model">hr.employee</field>
+			<field name="inherit_id" ref="flexi_hr_ee.aspl_checklist_hr_employee_inherit_form_view" />
+			<field name="arch" type="xml">
+				<xpath expr="//button[@name='stock_quant_redirect']" position="before">
+					<button name="employee_meetings" type="object" string="Meeting"
+							icon="fa-users"/>
+				</xpath>
+				<xpath expr="//button[@name='emp_exit_form']" position="after">
+					<field name="event_ids" invisible="1"/>
+				</xpath>
+			</field>
+		</record>
+	
+	</data>
+</odoo>

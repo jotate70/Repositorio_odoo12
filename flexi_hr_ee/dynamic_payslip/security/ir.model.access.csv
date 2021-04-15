@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_payslip_page_label_design,access_payslip_page_label_design,model_payslip_page_label_design,base.group_user,1,1,1,1

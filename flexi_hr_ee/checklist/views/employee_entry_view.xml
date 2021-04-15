@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+
+		<record model="ir.ui.view" id="employee_entry_search_view">
+			<field name="name">Employee Entry Search View</field>
+			<field name="model">employee.entry</field>
+			<field name="arch" type="xml">
+				<search string="Employee Entry Search">
+					<!-- search by field direct -->
+					<field name="employee_id" />
+					<!-- group by -->
+					<group expand="1" string="Group By">
+						<filter string="Job Position" name="job_id" context="{'group_by':'job_id'}" />
+						<filter string="Department" name="department_id"
+							context="{'group_by':'department_id'}" />
+						<filter string="State" name="state" context="{'group_by':'state'}" />
+						<filter string="Join Date" name="join_date" context="{'group_by':'join_date'}" />
+					</group>
+				</search>
+			</field>
+		</record>
+
+		<record id="aspl_employee_entry_form_view" model="ir.ui.view">
+			<field name="name">Employee Entry</field>
+			<field name="model">employee.entry</field>
+			<field name="arch" type="xml">
+				<form string="Employee Entry" create="0" delete="0">
+					<header>
+						<button name="employee_details_verification" state="draft"
+							string="Verify" type="object" style="margin-right:5px" class="oe_highlight oe_left"
+							attrs="{'invisible': [('state','!=','draft')]}" />
+						<button name="emp_exit" string="Exit Form" style="margin-right:5px"
+							type="object" class="oe_highlight oe_left" state="entry_done"
+							groups="hr.group_hr_manager" 
+							attrs="{'invisible': ['|', ('state', '!=', 'entry_done'), ('emp_exit_init', '=', True)],
+									'required': [('emp_exit_init', '=', False)]}"/>
+
+						<field name="state" widget="statusbar" nolabel="1"
+							clickable="1" />
+					</header>
+					<sheet>
+						<div class="oe_title">
+							<h1>
+								<field name="name" readonly="1" />
+							</h1>
+						</div>
+						<group col="4">
+							<field name="employee_id" readonly="1" />
+							<field name="recruitment_id" readonly="1" />
+							<field name="job_id" readonly="1" />
+							<field name="join_date" readonly="1"/>
+							<field name="department_id" readonly="1" />
+							<field name="emp_exit_init" invisible="1"/>
+						</group>
+						<notebook>
+							<page string="Document(s)">
+								<field name="emp_document_ids" nolabel="1"
+									domain="[('doc_type', '=', 'entry')]" attrs="{'readonly': [('state', '!=', 'draft')]}">
+									<tree string="Documents" editable="top">
+										<field name="emp_doc_id" readonly="1" />
+										<field name="doc_image" filename="file_name" widget="binary" />
+										<field name="file_name" invisible="1" class="oe_inline oe_right" />
+										<field name="state" readonly="1" />
+									</tree>
+									<form>
+										<group col="4">
+											<field name="emp_doc_id" readonly="1" />
+											<field name="doc_image" filename="file_name" widget="binary" />
+											<field name="state" readonly="1" />
+											<field name="entry_id" invisible="1" />
+											<field name="file_name" invisible="1" class="oe_inline oe_right" />
+										</group>
+									</form>
+								</field>
+							</page>
+							<page string="Product(s)">
+								<field name="not_prod_allocation" invisible="1"/>
+								<button name="product_lot_allocation" type="object"
+									string="Allocate" class="oe_highlight oe_right"
+									attrs="{'invisible': ['|', ('state', '!=', 'draft'), ('not_prod_allocation', '!=', True)]}" />
+								<seperator />
+								<field name="emp_entry_product_ids" nolable="1"
+									attrs="{'readonly': [('state', '!=', 'draft')]}">
+									<tree string="Products" editable="top">
+										<field name="product_entry_id" invisible="1"
+											context="{'entry_serial': True}" />
+										<field name="product_id" />
+										<field name="serial_num" context="{'product_id': product_id}"
+											domain="[('product_qty', '&gt;', 0)]" 
+											attrs="{'required': [('require_serial', '!=', False)]}"/>
+										<field name="state_product" readonly="1" />
+										<field name="require_serial" invisible="1"/>
+										<button name="assign_product" string="Allocate" state="not_allocated"
+											type="object"
+											attrs="{'invisible': ['|', ('state_product','!=','not_allocated')]}" />
+									</tree>
+									<form>
+										<group>
+											<field name="product_id" readonly="1" />
+											<field name="serial_num" readonly="1" />
+											<field name="state_product" readonly="1" />
+										</group>
+									</form>
+								</field>
+							</page>
+							<page string="Previous Company">
+								<field name="previous_company_ids" attrs="{'readonly': [('state', '=', 'exited')]}">
+									<tree editable="bottom" >
+										<field name="name"/>
+										<field name="job_position"/>
+										<field name="description"/>
+										<field name="experience" string="Work Experience (Years)"/>
+									</tree>
+									<form>
+										<group>
+											<field name="name"/>
+											<field name="job_position"/>
+											<field name="description"/>
+											<field name="experience"/>
+										</group>
+									</form>
+								</field>
+							</page>
+						</notebook>
+						<div class="oe_chatter">
+							<field name="message_follower_ids" widget="mail_followers" />
+							<field name="message_ids" widget="mail_thread" />
+						</div>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record id="aspl_emp_entry_tree_view" model="ir.ui.view">
+			<field name="name">Employee Entry</field>
+			<field name="model">employee.entry</field>
+			<field name="arch" type="xml">
+				<tree string="Employee Entry" create="0" delete="0">
+					<field name="employee_id" />
+					<field name="name" />
+					<field name="join_date" />
+					<field name="state" />
+				</tree>
+			</field>
+		</record>
+
+		<record id="action_aspl_emp_entry" model="ir.actions.act_window">
+			<field name="name">Employee Entry</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">employee.entry</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+		<menuitem id="menu_employee_checklist" name="Employee Checklist"
+			parent="hr.menu_hr_root" sequence="5" />
+
+		<menuitem id="main_menu_aspl_employee_entry" name="Employee Entry Process"
+			parent="menu_employee_checklist" sequence="5" action="action_aspl_emp_entry"
+			groups="hr.group_hr_manager" />
+
+		<record id="action_aspl_emp_entry_for_recruitment" model="ir.actions.act_window">
+			<field name="name">Employee Entry</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">employee.entry</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+		</record>
+	</data>
+</odoo>

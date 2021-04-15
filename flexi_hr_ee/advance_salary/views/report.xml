@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <report
+            id="report_summary_wiz"
+            string="Advance Salary Summary"
+            model="summary.wiz"
+            report_type="qweb-pdf"
+            file="flexi_hr_ee.template_hr_adv_sal"
+            name="flexi_hr_ee.template_hr_adv_sal"
+        />
+
+        <record id="summary_paperformat_euro" model="report.paperformat">
+            <field name="name">Advance salary European A4</field>
+            <field name="default" eval="True" />
+            <field name="format">A4</field>
+            <field name="page_height">0</field>
+            <field name="page_width">0</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">50</field>
+            <field name="margin_bottom">33</field>
+            <field name="margin_left">7</field>
+            <field name="margin_right">7</field>
+            <field name="header_line" eval="False" />
+            <field name="header_spacing">50</field>
+            <field name="dpi">90</field>
+            <field name="report_ids" eval="[(6,0,[
+                                ref('flexi_hr_ee.report_summary_wiz')])]"/>
+        </record>
+
+    </data>
+</odoo>

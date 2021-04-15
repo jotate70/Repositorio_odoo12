@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="aspl_hr_employee_inherit_from_view" model="ir.ui.view">
+            <field name="name">HR Employee</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet//div/button[@name='toggle_active']" position="after">
+                    <button name="salary_request" string="Advance Salary Request" type="object" 
+                                    class="oe_stat_button" icon="fa-rupee" context="{'emp_form': True}">
+                    </button>
+                </xpath>
+                <xpath expr="//form/sheet//group[@name='active_group']" position="after">
+                    <group string="Advance Salary">
+                        <field name="advance_salary_limit" groups="hr.group_hr_manager"/>
+                        <field name="req_count" groups="hr.group_hr_manager"/> 
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="aspl_view_hr_job_inherit_form_view" model="ir.ui.view">
+            <field name="name">hr.job.form</field>
+            <field name="model">hr.job</field>
+            <field name="inherit_id" ref="hr.view_hr_job_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet//field[@name='no_of_recruitment']" position="after">
+                    <field name="advance_salary_limit"/>
+                    <field name="req_count" groups="hr.group_hr_manager"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

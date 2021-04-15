@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+        <record id="summary_wiz" model="ir.ui.view">
+            <field name="name">Summary</field>
+            <field name="model">summary.wiz</field>
+            <field name="arch" type="xml">
+                <form string="Summary">
+                    <group col="4">
+                        <field name="view_by"/>
+                        <field name="date_from" attrs="{'invisible': [('view_by','=','month')],
+                                                          'required': [('view_by', '!=', 'month')]}"/>  
+                        <field name="date_to" attrs="{'invisible': [('view_by','=','month')],
+                                                          'required': [('view_by', '!=', 'month')]}"/> 
+<!--                         <label string="Month/Year" attrs="{'invisible': [('view_by','!=','month')]}"/> -->
+                        <div class="address_format" attrs="{'invisible': [('view_by','!=','month')]}">
+                            <field name="summary_month"
+                                  attrs="{'invisible': [('view_by','!=','month')],
+                                            'required': [('view_by', '=', 'month')]}"/> 
+                            <field name="required_year"
+                                   attrs="{'invisible': [('view_by','!=','month')],
+                                            'required': [('view_by', '=', 'month')]}"/>
+                        </div>
+                    </group>
+                    <group>
+                        <field name="employee_ids" widget="many2many_tags"
+                                attrs="{'invisible': [('view_by','!=','employee')]}">
+                        </field>
+                        <newline/>
+                        <field name="state"
+                                attrs="{'invisible': [('view_by','!=','state')]}"/>
+                    </group>
+                    <footer>
+                        <button string="Print" name="summary_details" type="object" default_focus="1" class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_summary_wiz_menu" model="ir.actions.act_window">
+	        <field name="name">Summary View</field>
+	        <field name="type">ir.actions.act_window</field>
+	        <field name="res_model">summary.wiz</field>
+	        <field name="view_type">form</field>
+	        <field name="view_mode">form</field>
+	        <field name="view_id" ref="summary_wiz"/>
+	        <field name="target">new</field>
+        </record>
+
+    <menuitem
+        id="main_menu_summary"
+        name="Print Summary"
+        parent="menu_aspl_hr_advance_salary"
+        action="action_summary_wiz_menu"
+        groups="base.group_user"
+       />
+
+</odoo>

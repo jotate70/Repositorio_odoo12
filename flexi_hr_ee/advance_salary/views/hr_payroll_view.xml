@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_hr_payslip_form_aspl" model="ir.ui.view">
+            <field name="name">hr.payslip.form</field>
+            <field name="model">hr.payslip</field>
+            <field name="inherit_id" ref="hr_payroll.view_hr_payslip_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook/page/group" position="after">
+                    <separator string="Salary Payments" invisible="1"/>
+                    <field name="salary_pay_ids" invisible="1">
+                        <tree string="Salary Payment" editable="top">
+                            <field name="date"/>
+                            <field name="amount"/>
+                            <field name="payslip_id"/>
+                            <field name="state"/>
+                        </tree>
+                    </field>
+                    <separator string="Advance Payment" invisible="1"/>
+                    <field name="adv_sal_req_ids" invisible="1"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

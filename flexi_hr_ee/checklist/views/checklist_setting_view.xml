@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="inherit_checklist_res_config_settings_form_view" model="ir.ui.view">
+        <field name="name">res.config.settings.checklist.form</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="hr.res_config_settings_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('app_settings_block')][@data-key='hr']" position="inside">
+                <h2>Checklist Settings</h2>
+                <div class="row mt16 o_settings_container">
+                    <div class="col-xs-12 col-md-6 o_setting_box">
+                        <div class="o_setting_right_pane">
+                            <label for="entry_document_ids" />
+                            <span class="fa fa-lg fa-building-o" title="Set the Entry Documents here.." groups="base.group_multi_company" />
+                            <div class="row">
+                                <div class="text-muted col-md-8">
+                                    Set the Entry Documents here.
+                                </div>
+                            </div>
+                            <div class="content-group">
+                                <div class="mt16">
+                                    <field name="entry_document_ids" widget="many2many_tags" class="oe_inline"
+                                        domain="[('doc_type', '=', 'entry')]" context="{'default_doc_type': 'entry'}"
+                                    >
+                                        <form>
+                                            <group col="4">
+                                                <field name="name" />
+                                                <field name="doc_type" invisible="1" />
+                                            </group>
+                                        </form>
+                                    </field>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-md-6 o_setting_box">
+                        <div class="col-6">
+                            <label for="exit_document_ids" />
+                            <span class="fa fa-lg fa-building-o" title="Set the Exit Documents here.." groups="base.group_multi_company" />
+                            <div class="row">
+                                <div class="text-muted col-md-8">
+                                    Set the Exit Documents here.
+                                </div>
+                            </div>
+                            <div class="content-group">
+                                <div class="mt16">
+                                    <field name="exit_document_ids" widget="many2many_tags" class="oe_inline"
+                                        domain="[('doc_type', '=', 'exit')]" context="{'default_doc_type': 'exit'}">
+                                        <form>
+                                            <group col="4">
+                                                <field name="name" />
+                                                <field name="doc_type" invisible="1" />
+                                            </group>
+                                        </form>
+                                    </field>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt16 o_settings_container">
+                    <div class="col-xs-12 col-md-6 o_setting_box">
+                        <div class="o_setting_right_pane">
+                            <label for="notice_period" />
+                            <span class="fa fa-lg fa-building-o" title="Set the Notice Period here.." groups="base.group_multi_company" />
+                            <div class="row">
+                                <div class="text-muted col-md-8">
+                                    Set Notice Period here..
+                                </div>
+                            </div>
+                            <div class="content-group">
+                                <div class="mt16">
+                                    <div class="address_format" readonly="1">
+                                        <field name="notice_period" style="width: 8.5%" />
+                                        Days
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-md-6 o_setting_box">
+                        <div class="col-6">
+                            <label for="product_ids" />
+                            <span class="fa fa-lg fa-building-o" title="Set the Product(s) to be allocated.."
+                                groups="base.group_multi_company" />
+                            <div class="row">
+                                <div class="text-muted col-md-8">
+                                    Set the Product(s) to be allocated..
+                                </div>
+                            </div>
+                            <div class="content-group">
+                                <div class="mt16">
+                                    <field name="product_ids" widget="many2many_tags" class="oe_inline" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

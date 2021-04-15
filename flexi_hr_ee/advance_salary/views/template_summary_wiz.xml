@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+	<template id="template_hr_adv_sal">
+		<t t-call="web.html_container">
+			<t t-foreach="doc_ids" t-as="o">
+				<t t-call="web.external_layout">
+					<div class="page">
+						<center>
+							<h2>
+								<strong>Summary Details</strong>
+							</h2>
+						</center>
+						<div t-if="not o.view_by=='month'" class="row mt32 mb32" id="informations">
+							<div t-if="o.date_from and o.date_to" class="col-xs-50">
+								<strong>From Date: </strong>
+								<span t-field="o.date_from" style="margin-right:20px" />
+								<strong>To Date: </strong>
+								<span t-field="o.date_to" />
+							</div>
+						</div>
+						<div t-if="o.view_by=='month'" class="row mt32 mb32" id="informations">
+							<div t-if="get_date(o)[2]" class="col-xs-50">
+								<strong>Month/Year: </strong>
+								<span t-esc="get_date(o)[2]" />
+								/
+								<span t-esc="o.required_year" />
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-xs-50">
+								<t t-if="o.view_by=='employee'">
+									<div class="col-xs-50" id="informations">
+										<div t-if="o.employee_ids">
+											<strong>Employee: </strong>
+											<span t-esc="', '.join(map(lambda x: (x.name), o.employee_ids))" />
+										</div>
+									</div>
+									<t t-foreach="summary_emp(o)" t-as="emp">
+										<h3>
+											Employee:
+											<span t-esc="emp"></span>
+										</h3>
+										<table class="table  table-round-border" style="font-size:12px;">
+											<tr class="text-center">
+												<th>Request No.</th>
+												<th>Requested Date</th>
+												<th>Approved Date</th>
+												<th>Disburse Date</th>
+												<th class="text-right">Amount</th>
+												<th>State</th>
+											</tr>
+											<tbody>
+												<tr t-foreach="emp_value" t-as="emp_val">
+													<td width="20%">
+														<span t-esc="emp_val['name']" />
+													</td>
+													<td align="center" width="15%">
+														<span t-esc="emp_val['request_date']" />
+													</td>
+													<td align="center" width="15%">
+														<span t-if="emp_val['approved_date']" t-esc="emp_val['approved_date']" />
+														<span t-if="not emp_val['approved_date']">-</span>
+													</td>
+													<td align="center" width="15%">
+														<span t-if="emp_val['disburse_date']" t-esc="emp_val['disburse_date']" />
+														<span t-if="not emp_val['disburse_date']">-</span>
+													</td>
+													<td align="right" width="15%">
+														<span t-if="emp_val['approved_amt']" t-esc="emp_val['approved_amt']"
+															t-esc-options='{"widget": "monetary", "display_currency": "res_company.currency_id"}' />
+													</td>
+													<td width="20%" class="text-center">
+														<span t-if="emp_val['state'] == 'draft'">Draft </span>
+														<span t-if="emp_val['state'] == 'sent_hr'">Waiting for HR Approval </span>
+														<span t-if="emp_val['state'] == 'sent_admin'">Waiting for Approval </span>
+														<span t-if="emp_val['state'] == 'approved'">Approved </span>
+														<span t-if="emp_val['state'] == 'reject'">Reject </span>
+														<span t-if="emp_val['state'] == 'paid'">Paid </span>
+														<span t-if="emp_val['state'] == 'closed'">Closed </span>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+									</t>
+								</t>
+								<t t-if="o.view_by=='state' and not o.state">
+									<t t-foreach="summary_emp(o)" t-as="emp">
+										<h3>
+											State:
+											<span t-if="emp == 'draft'">Draft</span>
+											<span t-if="emp == 'sent_hr'">Waiting for HR Approval</span>
+											<span t-if="emp == 'sent_admin'">Waiting for Approval</span>
+											<span t-if="emp == 'approved'">Approved</span>
+											<span t-if="emp == 'reject'">Reject</span>
+											<span t-if="emp == 'paid'">Paid</span>
+											<span t-if="emp == 'closed'">Closed</span>
+										</h3>
+										<table class="table  table-round-border" style="font-size:12px;">
+											<thead>
+												<tr class="text-center">
+													<th>Employee</th>
+													<th>Request No.</th>
+													<th>Requested Date</th>
+													<th>Approved Date</th>
+													<th>Disburse Date</th>
+													<th class="text-right">Amount</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr t-foreach="emp_value" t-as="emp_val">
+													<td width="20%">
+														<span t-esc="emp_val['employee_id']" />
+													</td>
+													<td width="20%">
+														<span t-esc="emp_val['name']" />
+													</td>
+													<td align="center" width="15%">
+														<span t-esc="emp_val['request_date']" />
+													</td>
+													<td align="center" width="15%">
+														<span t-if="emp_val['approved_date']" t-esc="emp_val['approved_date']" />
+														<span t-if="not emp_val['approved_date']">-</span>
+													</td>
+													<td align="center" width="15%">
+														<span t-if="emp_val['disburse_date']" t-esc="emp_val['disburse_date']" />
+														<span t-if="not emp_val['disburse_date']">-</span>
+													</td>
+													<td align="right" width="15%">
+														<span t-if="emp_val['approved_amt']" t-esc="emp_val['approved_amt']"
+															t-esc-options='{"widget": "monetary", "display_currency": "res_company.currency_id"}' />
+													</td>
+												</tr>
+											</tbody>
+										</table>
+									</t>
+								</t>
+								<t t-if="o.view_by=='state' and o.state">
+									<div t-if="o.state">
+										<strong>State: </strong>
+										<span t-field="o.state" />
+									</div>
+									<table class="table  table-round-border" style="font-size:12px;">
+										<thead>
+											<tr class="text-center">
+												<th>Employee</th>
+												<th>Requested Date</th>
+												<th>Approved Date</th>
+												<th>Disburse Date</th>
+												<th class="text-right">Amount</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr t-foreach="summary_emp(o)" t-as="emp_rec">
+												<td width="20%">
+													<span t-esc="emp_rec.employee_id.name"></span>
+												</td>
+												<td width="15%">
+													<span t-esc="emp_rec.request_date"></span>
+												</td>
+												<td align="center" width="15%">
+													<span t-if="emp_rec.approved_date" t-esc="emp_rec.approved_date"></span>
+													<span t-if="not emp_rec.approved_date">-</span>
+												</td>
+												<td align="center" width="15%">
+													<span t-if="emp_rec.disburse_date" t-esc="emp_rec.disburse_date" />
+													<span t-if="not emp_rec.disburse_date">-</span>
+												</td>
+												<td align="right" width="15%" style="float:right">
+													<span t-esc="emp_rec.approved_amt"
+														t-esc-options='{"widget": "monetary", "display_currency": "res_company.currency_id"}' />
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</t>
+								<t t-if="o.view_by=='month'">
+									<table class="table  table-round-border" style="font-size:12px;">
+										<thead>
+											<tr class="text-center">
+												<th>Employee</th>
+												<th>Requested Date</th>
+												<th>Approved Date</th>
+												<th>Disburse Date</th>
+												<th class="text-right">Amount</th>
+												<th>Status</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr t-foreach="summary_emp(o)" t-as="emp_rec">
+												<td width="20%">
+													<span t-esc="emp_rec.employee_id.name"></span>
+												</td>
+												<td width="15%">
+													<span t-esc="emp_rec.request_date"></span>
+												</td>
+												<td align="center" width="15%">
+													<span t-if="emp_rec.approved_date" t-esc="emp_rec.approved_date"></span>
+													<span t-if="not emp_rec.approved_date">-</span>
+												</td>
+												<td align="center" width="15%">
+													<span t-if="emp_rec.disburse_date" t-esc="emp_rec.disburse_date" />
+													<span t-if="not emp_rec.disburse_date">-</span>
+												</td>
+												<td align="right" width="15%" style="float:right">
+													<span t-esc="emp_rec.approved_amt"
+														t-esc-options='{"widget": "monetary", "display_currency": "res_company.currency_id"}' />
+												</td>
+												<td width="20%">
+													<span t-if="emp_rec.state == 'draft'">Draft </span>
+													<span t-if="emp_rec.state == 'sent_hr'">Waiting for HR Approval</span>
+													<span t-if="emp_rec.state == 'sent_admin'">Waiting for Approval</span>
+													<span t-if="emp_rec.state == 'approved'">Approved</span>
+													<span t-if="emp_rec.state == 'reject'">Rejected</span>
+													<span t-if="emp_rec.state == 'paid'">Paid</span>
+													<span t-if="emp_rec.state == 'closed'">Closed</span>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</t>
+							</div>
+						</div>
+					</div>
+				</t>
+			</t>
+		</t>
+	</template>
+
+</odoo>

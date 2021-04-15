@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+
+		<record model="ir.ui.view" id="employee_exit_search_view">
+			<field name="name">Employee Exit Search View</field>
+			<field name="model">employee.exit</field>
+			<field name="arch" type="xml">
+				<search string="Employee Exit Search">
+					<!-- search by field direct -->
+					<field name="employee_id" />
+					<!-- group by -->
+					<group expand="1" string="Group By">
+						<filter string="Job Position" name="job_id" context="{'group_by':'job_id'}" />
+						<filter string="Department" name="department_id"
+							context="{'group_by':'department_id'}" />
+						<filter string="State" name="state" context="{'group_by':'state'}" />
+						<filter string="Resign Date" name="resign_date"
+							context="{'group_by':'resign_date'}" />
+						<filter string="Leaving Date" name="leaving_date"
+							context="{'group_by':'leaving_date'}" />
+					</group>
+				</search>
+			</field>
+		</record>
+
+		<record id="aspl_employee_exit_form_view" model="ir.ui.view">
+			<field name="name">Employee Exit</field>
+			<field name="model">employee.exit</field>
+			<field name="arch" type="xml">
+				<form string="Employee Exit" context="{'exit_id': active_id}"
+					delete="0">
+					<header>
+						<button name="sent_admin" string="Send to Manager" state="draft"
+							type="object"
+							attrs="{'invisible': ['|', ('state','!=','draft'), ('manager_appr_req', '!=', True)]}"
+							groups="hr.group_hr_manager" />
+						<button name="sent_hr" string="Send to HR" state="draft"
+							type="object"
+							attrs="{'invisible': ['|', ('state','!=','draft'), ('manager_appr_req', '=', True)],
+												  'required': [('manager_appr_req', '=', False)]}" />
+						<button name="sent_hr" string="Send to HR" state="sent_admin"
+							type="object" attrs="{'invisible': [('state','!=','sent_admin')]}" />
+						<button name="verify_resignation" state="sent_hr" string="Verified"
+							type="object" style="margin-right:5px" class="oe_highlight oe_left"
+							groups="hr.group_hr_manager" attrs="{'invisible': [('state','!=','sent_hr')]}" />
+						<button name="approve_resignation" type="object" string="Close"
+							attrs="{'invisible': [('state', '!=', 'verified')]}" groups="hr.group_hr_manager"
+							class="oe_highlight oe_left" />
+						<button name="cancel_reason" type="object" string="Cancel"
+							icon="fa-times-circle-o fa-lg" class="oe_highlight oe_left"
+							attrs="{'invisible': [('state', 'in', ('exit_done', 'cancel'))]}" />
+						<field name="state" widget="statusbar" nolabel="1"/>
+					</header>
+					<sheet>
+						<div class="oe_button_box" name="button_box">
+							<button name="action_makeMeeting_custom" class="oe_stat_button"
+								icon="fa-calendar" type="object" help="Schedule interview with this applicant"
+								context="{'from_exit': True}">
+								<div class="o_field_widget o_stat_info">
+									<span class="o_stat_text">Meetings</span>
+								</div>
+							</button>
+						</div>
+						<div class="oe_title">
+							<h1>
+								<field name="name" readonly="1" />
+							</h1>
+						</div>
+						<group col="4">
+							<field name="manager_appr_req" attrs="{'readonly': [('state', '!=', 'draft')]}" />
+							<newline />
+							<field name="employee_id"
+								options="{'no_quick_create':True,'no_create_edit':True}" attrs="{'readonly': [('state', '!=', 'draft')]}" />
+							<field name="job_id" attrs="{'readonly': [('state', '!=', 'draft')]}" />
+							<field name="resign_date" attrs="{'readonly': [('state', '!=', 'draft')]}" />
+							<field name="department_id" attrs="{'readonly': [('state', '!=', 'draft')]}" />
+							<label for="notice_period" string="Notice Period"
+								attrs="{'invisible': [('state', '=', 'draft')]}" />
+							<div class="address_format" readonly="1"
+								attrs="{'invisible': [('state', '=', 'draft')]}">
+								<field name="notice_period" style="width: 15%" context="{'exit_id': active_id}"
+									attrs="{'readonly': [('state', 'not in', ('sent_admin', 'sent_hr'))]}" />
+								Days
+							</div>
+							<field name="leaving_date" attrs="{'invisible': [('state', '=', 'draft')]}"
+								readonly="1" />
+						</group>
+						<notebook>
+							<page string="Document(s)">
+								<field name="emp_document_ids" domain="[('doc_type', '=', 'EXIT')]"
+									attrs="{'readonly': [('state', 'not in', ('draft', 'sent_hr'))]}">
+									<tree string="Documents" editable="top">
+										<field name="emp_doc_id" readonly="1" />
+										<field name="doc_image" filename="file_name" widget="binary" />
+										<field name="file_name" invisible="1" class="oe_inline oe_right" />
+										<field name="state" readonly="1" />
+									</tree>
+									<form>
+										<group col="4">
+											<field name="emp_doc_id" readonly="1" />
+											<field name="doc_image" filename="file_name" widget="binary" />
+											<field name="state" readonly="1" />
+											<field name="exit_id" invisible="1" />
+											<field name="file_name" invisible="1" class="oe_inline oe_right" />
+										</group>
+									</form>
+								</field>
+							</page>
+							<page string="Product(s)">
+								<field name="not_prod_collection" invisible="1" />
+								<button name="product_lot_collection" type="object"
+									class="oe_right oe_highlight" string="Collect"
+									attrs="{'invisible': ['|', ('state', 'not in', ('sent_hr')) , ('not_prod_collection', '!=', True)]}" />
+								<field name="emp_product_ids" nolable="1"
+									context="{'default_emp_product_ids': emp_product_ids}" options="{'no_create': True, 'no_open': True}"
+									attrs="{'readonly': [('state', 'not in', ('sent_hr'))]}">
+									<tree string="Products" create="false" delete="false">
+										<field name="product_id" readonly="1" />
+										<field name="serial_num"
+											attrs="{'required': [('require_serial', '!=', False)]}" />
+										<field name="state_product" readonly="1" />
+										<field name="require_serial" invisible="1" />
+										<button name="not_assign_product" string="Collect"
+											type="object" state="draft"
+											attrs="{'invisible': [('state_product','!=','allocated')]}" />
+										<button name="pay_now" type="object" string="Pay Now"
+											class="oe_inline oe_left" groups="account.group_account_manager"
+											attrs="{'invisible': ['|', 
+                                                                  ('payment_by', '!=', 'cash'), 
+                                                                     ('state', '!=', 'collected')]}" />
+										<button name="disburse_amt" type="object" string="Pay by Cheque"
+											state="collect" groups="account.group_account_manager"
+											attrs="{'invisible': ['|', 
+                                                                  ('payment_by', '!=', 'cheque'), 
+                                                                  ('state', '!=', 'collected')]}" />
+										<button name="verify_product" type="object" state="collected"
+											class="oe_inline oe_left" string="Verify"
+											attrs="{'invisible': ['|', ('state', '!=', 'collected'), 
+                                                                        ('product_is', 'in', ('damaged', 'lost'))]}"
+											groups="hr.group_hr_manager" />
+										<button name="process_complete" type="object"
+											class="oe_inline oe_left" string="Process Done"
+											attrs="{'invisible': [('state', 'not in', ('verified', 'paid'))]}"
+											groups="hr.group_hr_manager" />
+										<field name="payment_by" invisible="1"/>
+										<field name="product_is" invisible="1"/>
+										<field name="state" invisible="1"/>
+									</tree>
+								</field>
+							</page>
+							<page string="Note(s)">
+								<field name="note" attrs="{'invisible': [('state', '!=', 'cancel')]}" />
+							</page>
+							<page string="Previous Company">
+								<field name="previous_company_ids" readonly="1">
+									<tree>
+										<field name="name" />
+										<field name="job_position" />
+										<field name="description" />
+										<field name="experience" />
+									</tree>
+									<form>
+										<group>
+											<field name="name" />
+											<field name="job_position" />
+											<field name="description" />
+											<field name="experience" />
+										</group>
+									</form>
+								</field>
+							</page>
+						</notebook>
+						<div class="oe_chatter">
+							<field name="message_follower_ids" widget="mail_followers" />
+							<field name="message_ids" widget="mail_thread" />
+						</div>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record id="aspl_emp_exit_tree_view" model="ir.ui.view">
+			<field name="name">Employee Exit</field>
+			<field name="model">employee.exit</field>
+			<field name="arch" type="xml">
+				<tree string="Employee Exit" delete="0">
+					<field name="employee_id" />
+					<field name="name" />
+					<field name="resign_date" />
+					<field name="state" />
+				</tree>
+			</field>
+		</record>
+
+		<record id="action_aspl_emp_exit" model="ir.actions.act_window">
+			<field name="name">Employee Exit</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">employee.exit</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+
+		<menuitem id="main_menu_aspl_employee_exit" name="Employee Exit Process"
+			parent="menu_employee_checklist" sequence="10" groups="base.group_user"
+			action="action_aspl_emp_exit" />
+
+	</data>
+</odoo>

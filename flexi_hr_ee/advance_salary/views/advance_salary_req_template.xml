@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+         <record id="email_advance_salary_template" model="mail.template">
+           <field name="name">Advance Salary Request template</field>
+           <field name="email_from">${(user.email or '')}</field>
+           <field name="subject">Advance Salary Request</field>
+           <field name="email_to">${object.employee_id.work_email|safe}</field>
+           <field name="model_id" ref="flexi_hr_ee.model_hr_advance_salary_request"/>
+           <field name="auto_delete" eval="False"/>
+           <field name="body_html"><![CDATA[
+                <div style="font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: rgb(255, 255, 255); ">
+                    <p>Hello ${object.employee_id.name},
+                    <br/>
+                        <p style="margin-left: 50px;">
+                           your advance salary request of Rs.${object.approved_amt} has been approved.
+                           Your number of installment(s) is ${object.no_of_installment}.
+                        </p>
+                    </p>
+                    <br/>
+                    Thank You,
+                    <br/>
+                    ${user.name}
+                </div>
+            ]]></field>
+       </record>
+
+       <record id="email_advance_salary_reject_template" model="mail.template">
+           <field name="name">Advance Salary Request Reject template</field>
+           <field name="email_from">${(user.email or '')}</field>
+           <field name="subject">Advance Salary Request Rejected</field>
+           <field name="email_to">${object.employee_id.work_email|safe}</field>
+           <field name="model_id" ref="flexi_hr_ee.model_hr_advance_salary_request"/>
+           <field name="auto_delete" eval="False"/>
+           <field name="body_html"><![CDATA[
+                <div style="font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: rgb(255, 255, 255); ">
+                    <p>Hello ${object.employee_id.name},
+                    <br/>
+                        <p style="margin-left: 50px;">
+                            Sorry, Your request for the advance salary has been rejected.
+                            Reason: ${object.reason}
+                            
+                        </p>
+                    </p>
+                    <br/>
+                    Thank You,
+                    <br/>
+                    ${user.name}
+                </div>
+        ]]></field>
+       </record>
+
+</data>
+</odoo>

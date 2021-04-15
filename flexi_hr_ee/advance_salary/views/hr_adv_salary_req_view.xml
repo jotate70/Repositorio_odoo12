@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Advance Salary Search View -->
+        <record model="ir.ui.view" id="advance_salary_search_view">
+            <field name="name">Advance Salary Request</field>
+            <field name="model">hr.advance.salary.request</field>
+            <field name="arch" type="xml">
+            <search string="Request Search">
+                <!-- search by field direct -->
+                <field name="name"/>
+                <!-- group by  -->
+                <group expand="1" string="Group By">
+                  <filter string="Payment Type" name="payment_by"
+                          context="{'group_by':'payment_by'}"/>
+                  <filter string="State" name="state"
+                          context="{'group_by':'state'}"/>
+                  <filter string="Request Date" name="request_date"
+                          context="{'group_by':'request_date'}"/>
+                  <filter string="Approved Date" name="approved_date"
+                          context="{'group_by':'approved_date'}"/>
+                  <filter string="Disburse Date" name="disburse_date"
+                          context="{'group_by':'disburse_date'}"/>
+                </group>
+            </search>
+            </field>
+        </record>
+
+        <record id="aspl_hr_advance_salary_form_view" model="ir.ui.view">
+            <field name="name">hr.advance.salary.request.form</field>
+            <field name="model">hr.advance.salary.request</field>
+            <field name="arch" type="xml">
+                <form string="Advance Salary Request">
+                    <header>
+                        <button name="sent_hr" string="Send To HR Manager" type="object"
+                                icon="fa-check text-success" states="draft"
+                                attrs="{'invisible': [('state','!=','draft')]}" 
+                                groups="base.group_user" />
+                        <button name="sent_admin" string="Send To Manager" type="object"
+                                icon="fa-check text-success" states="sent_hr"
+                                attrs="{'invisible': [('state','!=','sent_hr')]}" 
+                                groups="hr.group_hr_manager" />
+                        <button name="approval_rejection" string="Reject" type="object"
+                                icon="fa-times-circle text-danger" states="sent_hr"
+                                attrs="{'invisible': [('state','!=','sent_hr')]}" 
+                                groups="hr.group_hr_manager" />
+                        <button name="approval_done" string="Approve" type="object"
+                                icon="fa-check text-success" states='sent_admin'
+                                groups="base.group_erp_manager"/>
+                        <button name="approval_rejection" string="Reject" type="object"
+                                icon="fa-times-circle text-danger" states="sent_admin"
+                                groups="base.group_erp_manager"/>
+                        <button name="disburse_amt" string="Ready To Disburse" type="object"
+                                icon="fa-check text-success"
+                                groups="account.group_account_manager" 
+                                attrs="{'invisible':['|',('payment_by','=', 'next_salary'),
+                                ('state', '!=', 'approved')]}"/>
+                        <field name="state" widget="statusbar" nolabel="1"
+                               statusbar_visible="draft,sent_hr,sent_admin,approved,paid,reject,closed,cancelled"
+                               statusbar_colors='{"approval_done":"blue"}'/> 
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" readonly="1"/>
+                            </h1>
+                       </div>
+                       <div class="oe_button_box" name="button_box" groups="base.group_user">
+                        <button name="request_related_employee" class="oe_stat_button oe_event_attendee_button" icon="fa-users" type="object">
+                            <field name="req_count" widget="statinfo" string="Request(s)"/>
+                        </button>
+                        <button name="cancel_request" string="Cancel Request" type="object"
+                                states="cancelled" icon="fa-archive"
+                                groups="base.group_user" class="oe_stat_button oe_event_attendee_button"
+                                />
+                       </div>
+                        <group col="4">
+                            <field name="employee_id" attrs="{'readonly':[('state','!=', 'draft')]}" 
+                                         options="{'no_quick_create':True,'no_create_edit':True}"/>
+                            <field name="request_date" attrs="{'readonly':[('state','!=', 'draft')]}"/>
+                            <field name="request_amt" attrs="{'readonly':[('state','!=', 'draft')]}"/>
+                            <field name="payment_by" attrs="{'readonly':[('state','!=', 'draft')]}"/>
+                            <newline/>
+                            <label for="required_month" string="Required On" 
+                                   attrs="{'invisible':[('payment_by','!=', 'cheque')],
+                                           'readonly':[('state','!=','draft')]}"/>
+                            <div class="address_format" attrs="{'invisible':[('payment_by','!=', 'cheque')]}">
+                                 <field name="required_month" style="width: 20%"
+                                        attrs="{'readonly':[('state','!=','draft')]}"/>/
+                                 <field name="required_year" style="width: 25%"
+                                        attrs="{'readonly':[('state','!=','draft')]}"/>
+                            </div>
+                            <newline/>
+                            <field name="approved_date" attrs="{'readonly':[('state','not in',('sent_hr','sent_admin'))],
+                                                                'invisible':[('state','not in', ('approved','paid','closed'))]}"/>
+                            <field name="approved_amt" attrs="{'invisible':[('state','not in', ('sent_hr','sent_admin','approved','paid','closed'))],
+                                                               'readonly':[('state','not in',('sent_hr','sent_admin'))]}"/>
+                            <newline/>
+                            <field name="next_sal_date" attrs="{'invisible':['|',('payment_by','!=', 'next_salary'),('state','not in', ('approved','paid','closed'))]}"
+                                                                readonly="True"/>
+                            <field name="payslip_id" attrs="{'invisible':['|',('payment_by','!=', 'next_salary'),('state','not in', ('approved','paid','closed'))]}"
+                                                            readonly="True"/>
+                            <newline/>
+                            <field name="disburse_date" attrs="{'invisible':['|',('payment_by','!=', 'cheque'),('state','not in', ('paid','closed'))]}"
+                                                                readonly="True"/>
+                            <field name="move_id" attrs="{'invisible':['|',('payment_by','=', 'next_salary'),('state','not in', ('paid','closed'))]}"
+                                                          readonly="True"/>
+                            <field name="no_of_installment"
+                                   attrs="{'readonly':[('state','not in',('draft','sent_hr','sent_admin'))]}"/>
+                        </group>
+                        <notebook>
+                            <page string="Request Reason">
+                                <group >
+                                    <field name="req_reason" nolabel="1"
+                                           attrs="{'readonly':[('state','!=', 'draft')]}"/>
+                                </group>
+                            </page>
+                            <page string="Advance Salary Deduction" name="salary_payment">
+                                <field name="salary_payment_ids" attrs="{'invisible':[('state','not in', ('approved','paid','closed'))],
+                                										 'readonly': [('state', 'in', ('paid', 'closed', 'cancelled'))]}">
+                                    <tree string="Salary Payment" editable="top" delete="0">
+                                        <field name="employee_id" invisible="1"/>
+                                        <field name="date"/>
+                                        <field name="amount"/>
+                                        <field name="payslip_id"/>
+                                        <field name="payment_by"/>
+                                        <field name="state"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Rejection Reason" attrs="{'invisible':[('state','!=', 'reject')]}">
+                                <group>
+                                    <field name="reason"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                   </div> 
+               </form>
+            </field>
+        </record>
+
+        <record id="aspl_hr_advance_salary_tree_view" model="ir.ui.view">
+            <field name="name">hr.advance.salary.request.tree</field>
+            <field name="model">hr.advance.salary.request</field>
+            <field name="arch" type="xml">
+                <tree string="Advance Salary Request" >
+                    <field name="name"/>
+                    <field name="employee_id"/>
+                    <field name="request_date"/>
+                    <field name="request_amt"/>
+                    <field name="approved_amt"/>
+                    <field name="payment_by"/>
+                    <field name="state"/>
+               </tree>
+            </field>
+        </record>
+
+        <record id="action_aspl_hr_advance_salary_view" model="ir.actions.act_window">
+            <field name="name">Advance Salary Request</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.advance.salary.request</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        
+        <menuitem id="menu_aspl_hr_advance_salary" name="Advance Salary Request"
+            parent="hr.menu_hr_root" groups="base.group_user" sequence="4"/>
+        <menuitem id="main_menu_aspl_hr_advance_salary" name="Advance Salary Request" 
+        parent="menu_aspl_hr_advance_salary" sequence="1" 
+        action="action_aspl_hr_advance_salary_view" groups="base.group_user"/>
+      
+<!--       Advance Salary Request views for Accountant   -->
+        <record id="aspl_hr_advance_salary_form_view_accountant" model="ir.ui.view">
+            <field name="name">hr.advance.salary.request.form</field>
+            <field name="model">hr.advance.salary.request</field>
+            <field name="arch" type="xml">
+                <form string="Advance Salary Request" create="0">
+                    <header>
+                        <button name="sent_hr" string="Send To HR Manager" type="object"
+                                icon="fa-check text-success" states="draft"
+                                attrs="{'invisible': [('state','!=','draft')]}" 
+                                groups="base.group_user" />
+                        <button name="sent_admin" string="Send To Manager" type="object"
+                                icon="fa-check text-success" states="sent_hr"
+                                attrs="{'invisible': [('state','!=','sent_hr')]}" 
+                                groups="hr.group_hr_manager" />
+                        <button name="approval_rejection" string="Reject" type="object"
+                                icon="fa-times-circle text-danger" states="sent_hr"
+                                attrs="{'invisible': [('state','!=','sent_hr')]}" 
+                                groups="hr.group_hr_manager" />
+                        <button name="approval_done" string="Approve" type="object"
+                                icon="fa-check text-success" states='sent_admin'
+                                groups="base.group_erp_manager"/>
+                        <button name="approval_rejection" string="Reject" type="object"
+                                icon="fa-times-circle text-danger" states="sent_admin"
+                                groups="base.group_erp_manager"/>
+                        <button name="disburse_amt" string="Ready To Disburse" type="object"
+                                icon="fa-check text-success"
+                                groups="account.group_account_manager" 
+                                attrs="{'invisible':['|',('payment_by','=', 'next_salary'),
+                                ('state', '!=', 'approved')]}"/>
+                        <field name="state" widget="statusbar" nolabel="1"
+                               statusbar_visible="draft,sent_hr,sent_admin,approved,paid,reject,closed,cancelled"
+                               statusbar_colors='{"approval_done":"blue"}'/> 
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" readonly="1"/>
+                            </h1>
+                       </div>
+                       <div class="oe_button_box" name="button_box" groups="base.group_user">
+                        <button name="request_related_employee" class="oe_stat_button oe_event_attendee_button" icon="fa-users" type="object">
+                            <field name="req_count" widget="statinfo" string="Request(s)"/>
+                        </button>
+                        <button name="cancel_request" string="Cancel Request" type="object"
+                                states="cancelled" icon="fa-archive"
+                                groups="base.group_user" class="oe_stat_button oe_event_attendee_button"
+                                />
+                       </div>
+                        <group col="4">
+                            <field name="employee_id" attrs="{'readonly':[('state','!=', 'draft')]}" 
+                                         options="{'no_quick_create':True,'no_create_edit':True}"/>
+                            <field name="request_date" attrs="{'readonly':[('state','!=', 'draft')]}"/>
+                            <field name="request_amt" attrs="{'readonly':[('state','!=', 'draft')]}"/>
+                            <field name="payment_by" attrs="{'readonly':[('state','!=', 'draft')]}"/>
+                            <newline/>
+                            <label for="required_month" string="Required On" 
+                                   attrs="{'invisible':[('payment_by','!=', 'cheque')],
+                                           'readonly':[('state','!=','draft')]}"/>
+                            <div class="address_format" attrs="{'invisible':[('payment_by','!=', 'cheque')]}">
+                                 <field name="required_month" style="width: 20%"
+                                        attrs="{'readonly':[('state','!=','draft')]}"/>/
+                                 <field name="required_year" style="width: 25%"
+                                        attrs="{'readonly':[('state','!=','draft')]}"/>
+                            </div>
+                            <newline/>
+                            <field name="approved_date" attrs="{'readonly':[('state','not in',('sent_hr','sent_admin'))],
+                                                                'invisible':[('state','not in', ('approved','paid','closed'))]}"/>
+                            <field name="approved_amt" attrs="{'invisible':[('state','not in', ('sent_hr','sent_admin','approved','paid','closed'))],
+                                                               'readonly':[('state','not in',('sent_hr','sent_admin'))]}"/>
+                            <newline/>
+                            <field name="next_sal_date" attrs="{'invisible':['|',('payment_by','!=', 'next_salary'),('state','not in', ('approved','paid','closed'))]}"
+                                                                readonly="True"/>
+                            <field name="payslip_id" attrs="{'invisible':['|',('payment_by','!=', 'next_salary'),('state','not in', ('approved','paid','closed'))]}"
+                                                            readonly="True"/>
+                            <newline/>
+                            <field name="disburse_date" attrs="{'invisible':['|',('payment_by','!=', 'cheque'),('state','not in', ('paid','closed'))]}"
+                                                                readonly="True"/>
+                            <field name="move_id" attrs="{'invisible':['|',('payment_by','=', 'next_salary'),('state','not in', ('paid','closed'))]}"
+                                                          readonly="True"/>
+                            <field name="no_of_installment"
+                                   attrs="{'readonly':[('state','not in',('draft','sent_hr','sent_admin'))]}"/>
+                        </group>
+                        <notebook>
+                            <page string="Request Reason">
+                                <group >
+                                    <field name="req_reason" nolabel="1"
+                                           attrs="{'readonly':[('state','!=', 'draft')]}"/>
+                                </group>
+                            </page>
+                            <page string="Advance Salary Deduction" name="salary_payment" attrs="{'invisible':[('state','not in', ('approved','paid','closed'))]}">
+                                <field name="salary_payment_ids">
+                                    <tree string="Salary Payment" editable="top">
+                                        <field name="employee_id" invisible="1"/>
+                                        <field name="date"/>
+                                        <field name="amount"/>
+                                        <field name="payslip_id"/>
+                                        <field name="payment_by"/>
+                                        <field name="state"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Rejection Reason" attrs="{'invisible':[('state','!=', 'reject')]}">
+                                <group>
+                                    <field name="reason"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                   </div> 
+               </form>
+            </field>
+        </record>
+
+        <record id="aspl_hr_advance_salary_tree_view_accountant" model="ir.ui.view">
+            <field name="name">hr.advance.salary.request.tree</field>
+            <field name="model">hr.advance.salary.request</field>
+            <field name="arch" type="xml">
+                <tree string="Advance Salary Request" create="0">
+                    <field name="name"/>
+                    <field name="employee_id"/>
+                    <field name="request_date"/>
+                    <field name="request_amt"/>
+                    <field name="approved_amt"/>
+                    <field name="payment_by"/>
+                    <field name="state"/>
+               </tree>
+            </field>
+        </record>
+        <record id="action_aspl_hr_advance_salary_view_accountant" model="ir.actions.act_window">
+            <field name="name">Advance Disbursed Salary</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.advance.salary.request</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('state', '=', 'paid')]</field>
+            <field name="context">{'search_default_state': 'paid'}</field>
+        </record>
+        <record id="action_aspl_hr_advance_salary_view_accountant_form_view2" model="ir.actions.act_window.view">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="aspl_hr_advance_salary_form_view_accountant"/>
+            <field name="act_window_id" ref="action_aspl_hr_advance_salary_view_accountant"/>
+        </record>
+        <record id="action_aspl_hr_advance_salary_view_accountant_tree_view1" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="aspl_hr_advance_salary_tree_view_accountant"/>
+            <field name="act_window_id" ref="action_aspl_hr_advance_salary_view_accountant"/>
+        </record>
+
+        <menuitem id="main_menu_aspl_hr_advance_salary_account" name="Advance Disbursed Salary" 
+        parent="menu_aspl_hr_advance_salary" sequence="2" 
+        action="action_aspl_hr_advance_salary_view_accountant" groups="account.group_account_manager"
+        />
+
+    </data>
+</odoo>

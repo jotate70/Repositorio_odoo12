@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="inherit_adv_salary_res_config_settings_view" model="ir.ui.view">
+        <field name="name">res.config.settings.form.view</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="hr.res_config_settings_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('app_settings_block')][@data-key='hr']" position="inside">
+                <h2>Advance Salary Settings</h2>
+                <div class="row mt16 o_settings_container">
+                    <div class="col-xs-12 col-md-6 o_setting_box">
+                        <div class="o_setting_right_pane">
+                            <label for="interest_rate" />
+                            <span class="fa fa-lg fa-building-o" title="Set Interest Rate here.." groups="base.group_multi_company" />
+                            <div class="row">
+                                <div class="text-muted col-md-8">
+                                    Set Interest Rate for Advance Salary here..
+                                </div>
+                            </div>
+                            <div class="content-group">
+                                <div class="mt16">
+                                    <div class="address_format" readonly="1">
+                                        <field name="interest_rate" style="width: 10%" />
+                                        %
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-12 col-md-6 o_setting_box">
+                        <div class="col-6">
+                            <label for="max_term" />
+                            <span class="fa fa-lg fa-building-o" title="Set Maximum Term for Advance Salary here.."
+                                groups="base.group_multi_company" />
+                            <div class="row">
+                                <div class="text-muted col-md-8">
+                                    Set Maximum Term for Advance Salary here..
+                                </div>
+                            </div>
+                            <div class="content-group">
+                                <div class="mt16">
+                                    <div class="address_format" readonly="1">
+                                        <field name="max_term" style="width: 8.5%" />
+                                        month(s)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

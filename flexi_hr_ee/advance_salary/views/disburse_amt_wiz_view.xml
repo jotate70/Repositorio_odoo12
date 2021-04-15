@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="disburse_amt_form_view" model="ir.ui.view">
+            <field name="name">Disburse Amount</field>
+            <field name="model">disburse.amt.wiz</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group col="4">
+                        <field name="cheque_no"/>
+                        <field name="journal_id"/>
+                    </group>
+                    <footer>
+                        <button name="disburse" type="object" string="Disbursed" groups="account.group_account_manager"/>
+                        or
+                        <button string="Cancel" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_advance_salary_request,access_hr_advance_salary_request,model_hr_advance_salary_request,base.group_user,1,1,1,0
+access_hr_advance_salary_request_acc,access_hr_advance_salary_request_acc,model_hr_advance_salary_request,account.group_account_manager,1,1,1,0
+access_salary_payment,access_salary_payment,model_salary_payment,base.group_user,1,1,0,0
+access_hr_job_user,access_hr_job_user,hr.model_hr_job,base.group_user,1,1,0,0
+access_salary_payment_mag,access_salary_payment_mag,model_salary_payment,hr.group_hr_manager,1,1,1,0
+access_hr_contract_user,access_hr_contract_user,hr_contract.model_hr_contract,base.group_user,1,0,0,0

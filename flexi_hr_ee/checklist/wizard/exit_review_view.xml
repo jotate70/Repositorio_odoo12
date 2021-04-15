@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+   <data>
+
+       <record id="exit_review_form_view" model="ir.ui.view">
+           <field name="name">Exit Review</field>
+           <field name="model">exit.review</field>
+           <field name="arch" type="xml">
+               <form>
+                   <group>
+                       <field name="name"/>
+                   </group>
+                   <footer>
+                       <button name="add_review" type="object" string="Done" />
+                       or
+                       <button string="Cancel" special="cancel"/>
+                   </footer>
+               </form>
+           </field>
+       </record>
+
+   </data>
+</odoo>

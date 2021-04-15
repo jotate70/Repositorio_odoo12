@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+		<record id="aspl_employee_product_line_form_view" model="ir.ui.view">
+			<field name="name">Product(s)</field>
+			<field name="model">emp.product.line</field>
+			<field name="arch" type="xml">
+				<form>
+					<header>
+<!-- 						<button name="not_assign_product" string="Collect" type="object" -->
+<!-- 							state="draft" attrs="{'invisible': [('state_product','!=','allocated')]}" /> -->
+<!-- 						<button name="pay_now" type="object" string="Pay Now" -->
+<!-- 							class="oe_inline oe_left" groups="account.group_account_manager" -->
+<!-- 							attrs="{'invisible': ['|',  -->
+<!--                                                                   ('payment_by', '!=', 'cash'),  -->
+<!--                                                                      ('state', '!=', 'collected')]}" /> -->
+<!-- 						<button name="disburse_amt" type="object" string="Pay by Cheque" -->
+<!-- 							state="collect" groups="account.group_account_manager" -->
+<!-- 							attrs="{'invisible': ['|',  -->
+<!--                                                                   ('payment_by', '!=', 'cheque'),  -->
+<!--                                                                   ('state', '!=', 'collected')]}" /> -->
+<!-- 						<button name="verify_product" type="object" state="collected" -->
+<!-- 							class="oe_inline oe_left" string="Verify" -->
+<!-- 							attrs="{'invisible': ['|', ('state', '!=', 'collected'),  -->
+<!--                                                                         ('product_is', 'in', ('damaged', 'lost'))]}" -->
+<!-- 							groups="hr.group_hr_manager" /> -->
+<!-- 						<button name="process_complete" type="object" class="oe_inline oe_left" -->
+<!-- 							string="Process Done" -->
+<!-- 							attrs="{'invisible': [('state', 'not in', ('verified', 'paid'))]}" -->
+<!-- 							groups="hr.group_hr_manager" /> -->
+						<field name="state" widget="statusbar" nolable="1" />
+					</header>
+					<sheet>
+						<group col="4">
+							<field name="product_id" readonly="1" />
+							<field name="serial_num" readonly="1" />
+							<field name="product_is"
+								attrs="{'readonly': [('state', '!=', 'collected')],
+                                                   'invisible': [('state', '=', 'draft')]}" />
+							<field name="pay_check" attrs="{'invisible': [('product_is', '=', False)]}" />
+							<field name="state_product" readonly="1" invisible="1" />
+						</group>
+						<group string="Damaged Product Details" col="4"
+							attrs="{'invisible': [('pay_check', '!=', True)]}">
+							<field name="payment_by"
+								attrs="{'invisible': [('pay_check', '!=', True)],
+                                                   'required': [('pay_check', '=', True)],
+                                                   'readonly': [('state', '!=', 'collected')]}" />
+							<field name="charged_amt"
+								attrs="{'invisible': [('pay_check', '!=', True)],
+													'required': [('pay_check', '=', True)],
+                                                    'readonly': [('state', '!=', 'collected')]}" />
+                            <field name="journal_id" 
+                            	attrs="{'invisible': [('payment_by', '=', 'last_salary')],
+                            			'required': [('payment_by', '!=', 'last_salary')]}"/>
+							<field name="doc_image" filename="file_name"
+								attrs="{'invisible': [('product_is', '!=', 'damaged')],
+                                                   'readonly': [('state', '!=', 'collected')]}"
+								widget="binary" />
+							<field name="file_name" invisible="1" class="oe_inline oe_right" />
+							<newline />
+							<field name="payslip_id" readonly="1"
+								attrs="{'invisible': [('payment_by', '!=', 'last_salary')]}" />
+							<field name="last_sal_date"
+								attrs="{'invisible': [('payment_by', '!=', 'last_salary')]}" invisible="1"/>
+							<newline />
+							<field name="move_id" readonly="1"
+								attrs="{'invisible': [('payment_by', 'not in', ('cheque', 'cash'))]}" />
+						</group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record id="aspl_emp_product_line_tree_view" model="ir.ui.view">
+			<field name="name">Product(s)</field>
+			<field name="model">emp.product.line</field>
+			<field name="arch" type="xml">
+				<tree string="Products" create="false" delete="false">
+					<field name="product_id" readonly="1" />
+					<field name="serial_num" attrs="{'required': [('require_serial', '!=', False)]}" />
+					<field name="state_product" readonly="1" />
+					<field name="require_serial" invisible="1"/>
+				</tree>
+			</field>
+		</record>
+
+		<record id="action_aspl_emp_product_line" model="ir.actions.act_window">
+			<field name="name">Product(s)</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">emp.product.line</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+
+
+	</data>
+</odoo>
