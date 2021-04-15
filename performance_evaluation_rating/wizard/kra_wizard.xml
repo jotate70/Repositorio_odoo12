@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="kra_evaluation_wiz_summary_form" model="ir.ui.view">
+            <field name="name">kra.evaluation.wiz.summary.form</field>
+            <field name="model">kra.evaluation.wiz</field>
+            <field name="arch" type="xml">
+                <form string="kra evaluation Summary">
+                   <group>
+                       <field name="department_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                       <field name="job_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                       <field name="select_report" style="width:50%;" required="1"/>
+                       <field name="employee_ids" widget="many2many_tags" attrs="{'invisible':[('select_report','=','summary')]}" options="{'no_create': True}"/>
+                   </group>
+                    <group col="4">
+                       <field name="reviewer_plan"/>
+                        <field name="year"/>
+                        <field name="month" attrs="{'invisible':[('reviewer_plan','=','year')]}"/>
+                       <field name="week_nu" attrs="{'invisible':['|',('reviewer_plan','=','month'),('reviewer_plan','=','year')]}"/>
+                   </group>
+                   <footer>
+                        <button name="action_print" class="oe_highlight" string="Print"
+                                type="object"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                   </footer>
+               </form>
+            </field>
+        </record>
+
+        <record id="action_kra_summary_wizard" model="ir.actions.act_window">
+            <field name="name">KRA Evaluation Summary</field>
+            <field name="res_model">kra.evaluation.wiz</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="menu_kra_wizard_summary" name="KRA Evaluation Report"
+                  parent="hr.menu_human_resources_configuration"
+                  action="action_kra_summary_wizard"
+        />
+
+    </data>
+</odoo>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record id="aspl_hr_employee_overtime_inherit_from_view" model="ir.ui.view">
+            <field name="name">HR Employee</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet//group[@name='active_group']" position="after">
+                    <group string="Overtime" groups="hr.group_hr_manager">
+                        <field name="ot_rate_per_hour"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+		<record id="aspl_view_hr_job_overtime_position_inherit" model="ir.ui.view">
+            <field name="name">hr.job.form</field>
+            <field name="model">hr.job</field>
+            <field name="inherit_id" ref="hr.view_hr_job_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='offer']" position="after">
+                	<group string="Overtime" groups="hr.group_hr_manager">
+                    	<field name="ot_rate_per_hour" groups="hr.group_hr_manager"/>
+                   	</group>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

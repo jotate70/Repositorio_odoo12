@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="wizard_loan_form_view" model="ir.ui.view">
+            <field name="name">wizard loan.form</field>
+            <field name="model">wizard.loan</field>
+            <field name="arch" type="xml">
+                <form string="Loan Reject">
+                     <group>
+                         <field name="reason"/>
+                     </group>
+                     <footer>
+                        <button string="Confirm" name="get_data" type="object" class="oe_highlight" />
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,267 @@
+<?xml version="1.0"?>
+<openerp>
+<data>
+
+        <record id="pre_seq_loan_app_number" model="ir.sequence">
+            <field name="name">Loan Application Number</field>
+            <field name="code">loan.application.number</field>
+            <field name="prefix">Loan ID: %(year)s%(month)s%(day)s-</field>
+            <field name="padding">3</field>
+        </record>
+
+    <record id="email_template_for_new_loan_emi" model="mail.template">
+           <field name="name">New Emi Email Template</field>
+           <field name="email_from">${(user.email or '')}</field>
+           <field name="subject">New Loan EMI - Based On Extra Amount</field>
+           <field name="email_to">${object.employee_id.work_email}</field>
+           <field name="model_id" ref="flexi_hr_ee.model_loan_application"/>
+           <field name="auto_delete" eval="False"/>
+           <field name="report_template" ref="flexi_hr_ee.loan_summary_report"/>
+           <field name="report_name">Loan Summary</field>
+           <field name="body_html"><![CDATA[
+<div style="font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: rgb(255, 255, 255); ">
+    <p>Hello ${object.employee_id.name}, <br/>
+    <p style="margin-left: 50px;">
+        For ${object.loan_id} new emi is calculated based on the advanced payment of ${object.advance_amt}. Please see the attached report.
+    </p>
+    </p>
+    <br/>
+    Thank You,
+    <br/>
+    ${user.name}
+</div>
+            ]]></field>
+       </record>
+
+    <record id="email_template_for_new_loan_rate" model="mail.template">
+           <field name="name">New Emi Email Template</field>
+           <field name="email_from">${(user.email or '')}</field>
+           <field name="subject">New Loan EMI - Based On Rate</field>
+           <field name="email_to">${object.employee_id.work_email}</field>
+           <field name="model_id" ref="flexi_hr_ee.model_loan_application"/>
+           <field name="auto_delete" eval="False"/>
+           <field name="report_template" ref="flexi_hr_ee.loan_summary_report"/>
+           <field name="report_name">Loan Summary</field>
+           <field name="body_html"><![CDATA[
+<div style="font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: rgb(255, 255, 255); ">
+    <p>Hello ${object.employee_id.name}, <br/>
+    <p style="margin-left: 50px;">
+        For ${object.loan_id} new emi is calculated based on the new annual interest rate ${object.rate}. Please see the attached report.
+    </p>
+    </p>
+    <br/>
+    Thank You,
+    <br/>
+    ${user.name}
+</div>
+            ]]></field>
+       </record>
+
+    <record id="email_template_for_apporve_loan" model="mail.template">
+           <field name="name">Loan Approve Email Template</field>
+           <field name="email_from">${(user.email or '')}</field>
+           <field name="subject">Loan Approved</field>
+           <field name="email_to">${object.employee_id.work_email}</field>
+           <field name="model_id" ref="flexi_hr_ee.model_loan_application"/>
+           <field name="auto_delete" eval="False"/>
+           <field name="body_html"><![CDATA[
+<div style="font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: rgb(255, 255, 255); ">
+    <p>Hello ${object.employee_id.name}, <br/>
+    <p style="margin-left: 50px;">
+        ${object.loan_id} of ${object.approved_loan_amt} is approved.
+    </p>
+    </p>
+    <br/>
+    Thank You,
+    <br/>
+    ${user.name}
+</div>
+            ]]></field>
+       </record>
+
+    <record id="email_template_for_paid_loan" model="mail.template">
+           <field name="name">Loan Paid Email Template</field>
+           <field name="email_from">${(user.email or '')}</field>
+           <field name="subject">Loan Paid</field>
+           <field name="email_to">${object.employee_id.work_email}</field>
+           <field name="model_id" ref="flexi_hr_ee.model_loan_application"/>
+           <field name="auto_delete" eval="False"/>
+           <field name="body_html"><![CDATA[
+<div style="font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: rgb(255, 255, 255); ">
+    <p>Hello ${object.employee_id.name}, <br/>
+    <p style="margin-left: 50px;">
+        ${object.loan_id} of ${object.total_principal_amt} is Paid.</p>
+    </p>
+    <br/>
+    Thank You,
+    <br/>
+    ${user.name}
+</div>
+            ]]></field>
+       </record>
+
+    <record id="email_template_for_reject_loan" model="mail.template">
+           <field name="name">Loan Rejected Email Template</field>
+           <field name="email_from">${(user.email or '')}</field>
+           <field name="subject">Loan Rejected</field>
+           <field name="email_to">${object.employee_id.work_email}</field>
+           <field name="model_id" ref="flexi_hr_ee.model_loan_application"/>
+           <field name="auto_delete" eval="False"/>
+           <field name="body_html"><![CDATA[
+<div style="font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: rgb(255, 255, 255); ">
+    <p>Hello ${object.employee_id.name}, <br/>
+    <p style="margin-left: 50px;">
+        Your ${object.loan_id} is rejected because ${object.reject_reason}
+     </p>
+     </p>
+    <br/>
+    Thank You,
+    <br/>
+    ${user.name}
+</div>
+            ]]></field>
+       </record>
+
+    <record id="email_template_for_cancel_loan" model="mail.template">
+           <field name="name">Loan Cancelled Email Template</field>
+           <field name="email_from">${(user.email or '')}</field>
+           <field name="subject">Loan Cancelled</field>
+           <field name="email_to">${object.employee_id.work_email}</field>
+           <field name="model_id" ref="flexi_hr_ee.model_loan_application"/>
+           <field name="auto_delete" eval="False"/>
+           <field name="body_html"><![CDATA[
+<div style="font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: rgb(255, 255, 255); ">
+    <p>Hello ${object.employee_id.name}, <br/>
+    <p style="margin-left: 50px;">
+        Your ${object.loan_id} is Cancelled because ${object.loan_cancel_reason}
+     </p>
+     </p>
+    <br/>
+    Thank You,
+    <br/>
+    ${user.name}
+</div>
+            ]]></field>
+       </record>
+
+    <record id="email_template_for_loan_manager" model="mail.template">
+           <field name="name">New Loan Application For Approve</field>
+           <field name="email_from">${(user.email or '')}</field>
+           <field name="subject">New Loan Application For Approve</field>
+           <field name="email_to">${object.get_loan_manager_mail()}</field>
+           <field name="model_id" ref="flexi_hr_ee.model_loan_application"/>
+           <field name="auto_delete" eval="False"/>
+           <field name="body_html"><![CDATA[
+<div style="font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: rgb(255, 255, 255); ">
+    <p>
+    Hello,<br/>
+    <p style="margin-left: 50px;">
+     New loan application ${object.loan_id} is come to confirm. You can access this application:
+     </p>
+    </p>
+        % set signup_url = object.get_signup_url()
+        <a style="display:block; width: 150px; height:20px; margin-left: 120px; color: #DDD; font-family: 'Lucida Grande', Helvetica, Arial, sans-serif; font-size: 13px; font-weight: bold; text-align: center; text-decoration: none !important; line-height: 1; padding: 5px 0px 0px 0px; background-color: #8E0000; border-radius: 5px 5px; background-repeat: repeat no-repeat;"
+           href="${signup_url}">View ${object.state in ('approve') and 'Loan Application' or 'Loan Application'}</a>
+    <br/>
+    Thank You,
+    <br/>
+    ${user.name}
+</div>
+            ]]></field>
+       </record>
+
+        <record id="loan_contract_mail_template" model="mail.template">
+            <field name="name">Loan Contract</field>
+            <field name="model_id" ref="model_loan_application"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="is_loan_template" eval="True"/>
+            <field name="body_html"><![CDATA[
+<div> <center><b> THIS LOAN AGREEMENT (this "${object.loan_id}") dated this ${object.approve_date} </b></center></div>
+<div> <center> <b> BETWEEN </center></b>
+<div>
+<center> <b> ${object.company_id.street}, ${object.company_id.city}, ${user.company_id.state_id.name}, ${user.company_id.zip}, ${object.company_id.country_id.name}
+<br/> (${object.company_id.name}) </b> <center>
+<center> <b> AND </b></cenetr> <br/>
+<center> <b>
+(${object.employee_id.name})</b> </center> <br/>
+<br><br>
+<br><br>
+<p align="left">
+<b> IN CONSIDERATION OF </b> the Lender loaning certain monies (the "Loan") to the Borrower,
+and the Borrower repaying the Loan to the Lender, both parties agree to keep, perform and fulfill
+the promises and conditions set out in this Agreement: <br/> <br/>
+
+1) <u> <b>Loan Amount & Interest </b> </u><br/>
+The Lender promises to loan ${object.amount} to the Borrower and the Borrower promises to
+repay this principal amount to the Lender, with interest payable on the unpaid principal at
+the rate of ${object.rate}% percent per annum, calculated yearly no in advance. <br/> <br/>
+2) <u><b>Payment </b></u><br/>
+This Loan will be repaid in consecutive monthly installments of principal and interest on
+the 15 day of each month commencing the month following execution of this Agreement
+and continuing until 6/15/2020 with the balance the owing under this Agreement paid at
+that time.<br/><br/>
+3) <u><b> Default </b></u><br/>
+Notwithstanding anything to the contrary in this Agreement, if the Borrower defaults in
+the performance of any obligation under this Agreement, then the Lender may declare the
+principal amount owing and interest due under this Agreement at that time to be
+immediately due and payable.<br/><br/>
+4) <u><b> Governing Law </b></u><br/>
+This Agreement will be construed in accordance with and governed by the laws of the
+State.<br/><br/>
+5) <u><b> Costs </b></u><br/>
+All costs, expenses and expenditures including, without limitation, the complete legal
+costs incurred by enforcing this Agreement as a result of any default by the Borrower,
+will be added to the principal then outstanding and will immediately be paid by the
+Borrower.<br/><br/>
+6) <u><b> Binding Effect </b></u><br/>
+This Agreement will pass to the benefit of and be binding upon the respective heirs,
+executors, administrators, successors and permitted assigns of the Borrower and Lender.
+The Borrower waives presentment for payment, notice of non-payment, protest, and
+notice of protest.<br/><br/>
+7) <u><b> Amendments </b></u><br/>
+This Agreement may only be amended or modified by a written instrument executed by
+both the Borrower and the Lender.<br/><br/>
+8) <u><b> Severability </b></u><br/>
+The clauses and paragraphs contained in this Agreement are intended to be read and
+construed independently of each other. If any term, covenant, condition or provision of
+this Agreement is held by a court of competent jurisdiction to be invalid, void or
+unenforceable, it is the parties' intent that such provision be reduced in scope by the court
+only to the extent deemed necessary by that court to render the provision reasonable and
+enforceable and the remainder of the provisions of this Agreement will in no way be
+affected, impaired or invalidated as a result.<br/><br/>
+9) <u> <b> General Provisions </b></u><br/>
+Headings are inserted for the convenience of the parties only and are not to be considered
+when interpreting this Agreement. Words in the singular mean and include the plural and
+vice versa. Words in the masculine mean and include the feminine and vice versa.<br/><br/>
+10) <u><b> Entire Agreement </b> </u><br/>
+This Agreement constitutes the entire agreement between the parties and there are no
+further items or provisions, either oral or otherwise.<br/><br/>
+
+</p>
+<p align="left">
+<b> IN WITNESS WHEREOF,</b> the parties have duly affixed their signatures under hand and seal
+on this ${object.approve_date}.<br/><br/>
+    </p>
+</div>
+            ]]></field>
+        </record>
+
+	        <record id="email_template_loan_close" model="mail.template">
+            <field name="name">Loan Close Email</field>
+            <field name="email_from">${(user.email or '')}</field>
+            <field name="subject">Loan Close Email</field>
+            <field name="email_to">${object.employee_id.work_email}</field>
+            <field name="model_id" ref="flexi_hr_ee.model_loan_application"/>
+            <field name="lang">${object.employee_id.lang}</field>
+            <field name="body_html" type="html">
+                <div>
+                    <p>Dear Employee <b>${object.employee_id.name}</b>,<br/>
+                    Your loan <b>${object.loan_id}</b> closed successfully.
+                    </p>
+                    <p>Thank you.</p>
+                </div>
+            </field>
+        </record>
+
+</data>
+</openerp>

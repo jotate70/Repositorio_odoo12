@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record id="aspl_mass_leave_app_form_view" model="ir.ui.view">
+            <field name="name">mass.leave.application.form</field>
+            <field name="model">mass.leave.application</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group col="4">
+                        <field name="start_date" required="1"/>
+                        <field name="end_date" required="1"/>
+                        <field name="job_position_ids" widget="many2many_tags"/>
+                        <field name="exclude_employee_ids" widget="many2many_tags" context="{'job_position_ids':job_position_ids}"/>
+                        <field name="employee_ids" widget="many2many_tags" context="{'job_position_ids':job_position_ids}"/>
+                    </group>
+                    <notebook>
+                        <page string="Leave">
+                            <field name="mass_leave_line_ids" nolabel="1">
+                            <tree string="Public Holiday Line" editable="top" limit="12">
+                                <field name="leave_type" required="1"/>
+                                <field name="leave" required="1"/>
+                                <field name="status" required="1"/>
+                                <field name="double_validation"/>
+                                <field name="limit"/>
+                            </tree>
+                        </field>
+                        </page>
+                    </notebook>
+                    <footer>
+                        <button name="create_mass_leave" class="oe_highlight" string="Apply" type="object"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_mass_leave_application" model="ir.actions.act_window">
+            <field name="name">Mass Leave Application</field>
+            <field name="res_model">mass.leave.application</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="aspl_mass_leave_app_form_view"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem parent="menu_hr_leaves_configuration" sequence="15" 
+                 id="menu_leave_application" action="action_mass_leave_application" />
+
+    </data>
+</openerp>
