@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record id="aspl_hr_timesheet_line_form" model="ir.ui.view">
+            <field name="name">account.analytic.line</field>
+            <field name="model">account.analytic.line</field>
+            <field name="inherit_id" ref="hr_timesheet.hr_timesheet_line_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//form" position="replace">
+                    <form string="Analytic Entry">
+                        <header>
+                            <button name="send_to_manager" string="Submit To Manager" type="object" states="draft" />
+                            <button name="approve_timesheet" groups="hr_timesheet.group_timesheet_manager"
+                                string="Approve" type="object" states="send_to_manager" />
+                            <button name="cancel_timesheet" groups="hr_timesheet.group_timesheet_manager" string="Cancel"
+                                type="object" states="send_to_manager" />
+                            <field name="state" widget="statusbar" statusbar_visible="draft,send_to_manager,approved" />
+                        </header>
+                        <sheet string="Analytic Entry">
+                            <group>
+                                <group>
+                                    <field name="date" attrs="{'readonly': [('state', '=', 'approved')]}" />
+                                    <field name="name" attrs="{'readonly': [('state', '=', 'approved')]}" />
+                                    <field name="project_id" required="1" attrs="{'readonly': [('state', '=', 'approved')]}" />
+                                    <field name="task_id" domain="[('project_id', '=', project_id)]" attrs="{'readonly': [('state', '=', 'approved')]}" />
+                                    <field name="company_id" groups="base.group_multi_company" />
+                                </group>
+                                <group>
+                                    <field name="amount" attrs="{'readonly': [('state', '=', 'approved')]}" />
+                                    <field name="unit_amount" attrs="{'readonly': [('state', '=', 'approved')]}" />
+                                    <field name="currency_id" invisible="1" />
+                                </group>
+                            </group>
+                        </sheet>
+                    </form>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="aspl_hr_timesheet_line_tree" model="ir.ui.view">
+            <field name="name">account.analytic.line</field>
+            <field name="model">account.analytic.line</field>
+            <field name="inherit_id" ref="hr_timesheet.hr_timesheet_line_tree" />
+            <field name="arch" type="xml">
+                <field name="unit_amount" position="after">
+                    <field name="state" readonly="1" />
+                </field>
+            </field>
+        </record>
+
+        <record id="aspl_view_task_form2" model="ir.ui.view">
+            <field name="name">project.task</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project.view_task_form2" />
+            <field name="arch" type="xml">
+                <xpath expr="//notebook/page/field[@name='timesheet_ids']/tree/field[@name='unit_amount']"
+                    position="after">
+                    <field name="state" readonly="1"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

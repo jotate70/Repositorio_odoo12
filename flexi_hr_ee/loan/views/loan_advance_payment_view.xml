@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="loan_advance_payment_form" model="ir.ui.view">
+            <field name="name">loan.advance.payment.form</field>
+            <field name="model">loan.advance.payment</field>
+            <field name="arch" type="xml">
+                <form string="Loan Advance Payment">
+                    <group col="4">
+                        <field name="loan_app_id" options='{"no_open": True,"no_create": 1, "no_create_edit": 1}'
+                        domain="[('state','=','paid'),('rate_selection', '=', 'floating')]"/>
+                        <field name="amount"/>
+<!--                         <field name="journal_id"/> -->
+                        <field name="create_entries"/>
+                    </group>
+                    <notebook>
+                        <page string="Installment">
+                            <field name="lap_line_ids">
+                                <tree string="Installment" limit="12">
+                                    <field name="due_date"/>
+                                    <field name="principal"/>
+                                    <field name="interest"/>
+                                    <field name="total"/>
+                                    <field name="balance_amt"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                    <footer>
+                        <button name="new_payments" class="oe_highlight" string="Apply"
+                                type="object" attrs="{'invisible':[('create_entries', '=', False)]}"/>
+                        <button name="preview_payments" class="oe_highlight" string="Preview Payments"
+                                type="object" invisible="1"/>
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_loan_advance_payment" model="ir.actions.act_window">
+            <field name="name">Pre-Payment</field>
+            <field name="res_model">loan.advance.payment</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem action="action_loan_advance_payment" name="Pre-Payment" id="main_menu_loan_prepayment"
+                  parent="menu_loan_payment" sequence="1"/>
+
+    </data>
+</openerp>

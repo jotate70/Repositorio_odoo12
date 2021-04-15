@@ -1,0 +1,173 @@
+<odoo>
+    <data>
+
+         <template id="assets_backend" name="KRA Evaluation Assets" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <script type="text/javascript" src="/flexi_hr_ee/performance_evaluation_rating/static/src/js/main.js"/>
+                <script type="text/javascript" src="/flexi_hr_ee/performance_evaluation_rating/static/src/js/chatter_hide.js"/>
+            </xpath>
+        </template>
+
+        <record id="view_kra_evaluation_search" model="ir.ui.view">
+            <field name="name">kra.evaluation.search</field>
+            <field name="model">kra.evaluation</field>
+            <field name="arch" type="xml">
+                <search string="KRA Evaluation">
+                    <field name="employee_id"/>
+                    <field name="reviewer_id"/>
+                    <field name="department_id"/>
+                    <field name="job_id"/>
+                    <field name="reviewer_plan"/>
+                    <field name="kra_template_id"/>
+                    <field name="state"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_department" string="Department" domain="[]" context="{'group_by':'department_id'}"/>
+                        <filter name="group_job" string="Job" domain="[]" context="{'group_by':'job_id'}"/>
+                        <filter name="group_interval" string="Interval" domain="[]" context="{'group_by':'reviewer_plan'}"/>
+                    </group>
+                </search>
+             </field>
+        </record>
+
+        <record id="view_kra_evaluation_form" model="ir.ui.view">
+            <field name="name">KRA.Evaluation.form</field>
+            <field name="model">kra.evaluation</field>
+            <field name="arch" type="xml">
+                <form string="KRA Evaluation">
+                    <header>
+                        <button string="Submit to Manager" type="object" name="action_submit_manager" class="oe_highlight"/>
+                        <button string="Approve" type="object" name="action_first_approval" class="oe_highlight"/>
+                        <button string="Approve" type="object" name="action_second_approval" class="oe_highlight"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,submit,waiting,done"/>
+                    </header>
+                    <sheet>
+                        <group col="4">
+                            <field name="employee_id" readonly="1" attrs="{'readonly':[('state','=','done')]}" options="{'no_create': True}"/>
+                            <field name="department_id" options="{'no_create': True}" readonly="1" attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="job_id" options="{'no_create': True}" readonly="1" attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="reviewer_id" options="{'no_create': True}" readonly="1" attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="reviewer_plan" readonly="1" attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="week_nu" attrs="{'invisible': ['|',('reviewer_plan', '=', 'month'),('reviewer_plan', '=', 'year')],'readonly':[('state','=','done')]}" readonly="1"/>
+                            <field name="month" attrs="{'invisible': [('reviewer_plan', '=', 'year')], 'readonly':[('state','=','done')]}" readonly="1" />
+                            <field name="year" readonly="1" attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="kra_template_id" domain="[('job_id','in',[job_id]),('department_id','in',[department_id]),('is_active','=',True)]" required="1" options="{'no_create': True}"/>
+                            <field name="self_review" invisible="1"/>
+                            <field name="double_validation" invisible="1"/>
+                            <field name="internal_msg" invisible="1"/>
+                            <field name="current_user_id" invisible="1"/>
+                            <field name="hr_manager_user_ids" widget="many2many_tags" invisible="0"/>
+                        </group>
+                        <notebook>
+                           <page string="Questions Rating">
+                                <field name="que_rating_ids" nolabel="1" attrs="{'readonly':[('state','=','done')]}">
+                                    <tree string="Questions Rating">
+                                        <field name="questions" />
+                                        <field name="self_rating" attrs="{'column_invisible':[('parent.self_review', '=', False)], 'readonly':[('parent.state','in',('submit','waiting'))]}" />
+                                        <field name="self_comment" invisible="1" attrs="{'readonly':[('parent.state','in',('submit','waiting'))]}"/>
+                                        <field name="manager_rating"/>
+                                        <field name="manager_comment" invisible="1"/>
+                                        <field name="hr_rating" attrs="{'column_invisible': [('parent.double_validation', '=', False)]}"/>
+                                        <field name="hr_comment" invisible="1"/>
+                                    </tree>
+                                    <form name="kra_questions_form">
+                                        <separator string="KRA Questions" />
+                                        <group>
+                                            <field name="questions" placeholder="Questions" readonly="1"/>
+                                        </group>
+                                        <group col="4" attrs="{'invisible': [('parent.self_review', '=', False)]}">
+                                            <field name="self_rating" placeholder="Self Rating" attrs="{'required': [('parent.self_review', '=', True)], 'readonly':[('parent.state','in',('submit','waiting'))]}"/>
+                                            <field name="self_comment" placeholder="Self Comment" attrs="{'readonly':[('parent.state','in',('submit','waiting'))]}"/>
+                                        </group>
+                                        <group col="4">
+                                            <field name="manager_rating" required="1" attrs="{'readonly':['|',('parent.state','in',('waiting')),('parent.current_user_id','=',False)]}"/>
+                                            <field name="manager_comment" placeholder="Manager Comment" attrs="{'readonly':['|',('parent.state','in',('waiting')),('parent.current_user_id','=',False)]}"/>
+                                        </group>
+                                        <group col="4" attrs="{'invisible': [('parent.double_validation', '=', False)]}">
+                                             <field name="hr_rating" readonly="1" placeholder="HR Rating" attrs="{'required': [('parent.double_validation', '=', True)]}"/>
+                                             <field name="hr_comment" placeholder="HR Comment"
+                                                   groups="hr.group_hr_user,hr.group_hr_manager"/>
+                                        </group>
+                                    </form>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view"  id="view_kra_evaluation_form_extend">
+            <field name="name">KRA.Evaluation.form</field>
+            <field name="model">kra.evaluation</field>
+            <field name="inherit_id" ref="flexi_hr_ee.view_kra_evaluation_form"/>
+            <field name="groups_id" eval="[(6, 0, [ref('hr.group_hr_user','hr.group_hr_manager')])]"/>
+            <field name="arch" type="xml">
+                <xpath expr="sheet//field[@name='employee_id']" position="attributes">
+                    <attribute name="readonly">0</attribute>
+                </xpath>
+                <xpath expr="sheet//field[@name='department_id']" position="attributes">
+                    <attribute name="readonly">0</attribute>
+                </xpath>
+                <xpath expr="sheet//field[@name='job_id']" position="attributes">
+                    <attribute name="readonly">0</attribute>
+                </xpath>
+                <xpath expr="sheet//field[@name='reviewer_id']" position="attributes">
+                    <attribute name="readonly">0</attribute>
+                </xpath>
+                <xpath expr="sheet//field[@name='reviewer_plan']" position="attributes">
+                    <attribute name="readonly">0</attribute>
+                </xpath>
+                <xpath expr="sheet//field[@name='week_nu']" position="attributes">
+                    <attribute name="readonly">0</attribute>
+                </xpath>
+                <xpath expr="sheet//field[@name='month']" position="attributes">
+                    <attribute name="readonly">0</attribute>
+                </xpath>
+                <xpath expr="sheet//field[@name='year']" position="attributes">
+                    <attribute name="readonly">0</attribute>
+                </xpath>
+                <xpath expr="//page//form//field[@name='questions']" position="attributes">
+                    <attribute name="readonly">0</attribute>
+                </xpath>
+                <xpath expr="//page//form//field[@name='hr_rating']" position="attributes">
+                    <attribute name="readonly">0</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_kra_evaluation_tree" model="ir.ui.view">
+            <field name="name">KRA.Evaluation.tree</field>
+            <field name="model">kra.evaluation</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="employee_id"/>
+                    <field name="reviewer_id"/>
+                    <field name="department_id"/>
+                    <field name="job_id"/>
+                    <field name="reviewer_plan"/>
+                    <field name="kra_template_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="open_kra_evaluation_action" model="ir.actions.act_window">
+            <field name="name">KRA Evaluation</field>
+            <field name="res_model">kra.evaluation</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+         <menuitem
+            id="menu_kra_evaluation"
+            action="open_kra_evaluation_action"
+            parent="hr.menu_hr_root"
+            sequence="5"/>
+
+    </data>
+</odoo>

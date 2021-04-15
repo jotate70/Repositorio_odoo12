@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <template id="flexi_hr_ee.kra_eval">
+            <t t-call="web.html_container">
+                <t t-foreach="doc_ids" t-as="o">
+                    <t t-call="web.external_layout">
+                    <div class="page">
+                        <t t-if="o.select_report == 'summary'">
+                             <h3 class="text-center text-primary"><center>KRA Evaluation</center></h3>
+                           <div class="well">
+                               <div style="padding:0;width:50%;float:left;">
+                                    <b>Reviewer Plan Selection:</b> <span t-esc="o.reviewer_plan"/>
+                                </div>
+                                <div style="padding:0;width:50%;float:left;">
+                                    <b>Year:</b> <span t-esc="o.year"/>
+                                </div>
+                               <t t-if="o.month">
+                                    <div style="padding:0;width:50%;float:left;">
+                                        <b>Month:</b> <span t-esc="o.month"/>
+                                    </div>
+                               </t>
+                               <t t-if="o.week_nu">
+                                   <div style="padding:0;width:50%;float:left;">
+                                       <b>Week Number:</b> <span t-esc="o.week_nu"/>
+                                    </div>
+                               </t>
+                        </div>
+                        <br/>
+                             <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Reviewer</th>
+                                        <th>Department</th>
+                                        <th>Job Position</th>
+                                        <th>Self Rating</th>
+                                        <th>Rating By Manager</th>
+                                        <th>Rating By HR</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="query(o)" t-as="method">
+                                        <tr>
+                                            <td><span t-esc="method['name']"/></td>
+                                            <td><span t-esc="method['reviewer']"/></td>
+                                            <td><span t-esc="method['department']"/></td>
+                                            <td><span t-esc="method['job_pos']"/></td>
+                                            <td style="text-align:right"><span t-esc="method['total_self']"/></td>
+                                            <td style="text-align:right"><span t-esc="method['total_manager']"/></td>
+                                            <td style="text-align:right"><span t-esc="method['total_hr']"/></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </t>
+                        <t t-if="o.select_report == 'detail'">
+                             <h3 class="text-center text-primary"><center>KRA Evaluation</center></h3>
+                            <t t-foreach="query(o)" t-as="method">
+                                <hr style="border:1px solid black; width:100%" />
+                                <div class="well" style="border-bottom:2px">
+                                    <div style="padding:0;width:50%;float:left;">
+                                        <b>Employee:</b> <span t-esc="method"/>
+                                    </div>
+                                    <div style="padding:0;width:50%;float:left;">
+                                        <b>Reviewer Plan Selection:</b> <span t-esc="o.reviewer_plan"/>
+                                    </div>
+                                    <div style="padding:0;width:50%;float:left;">
+                                        <b>Year:</b> <span t-esc="o.year"/>
+                                    </div>
+                                    <t t-if="o.month">
+                                        <div style="padding:0;width:50%;float:left;">
+                                            <b>Month:</b> <span t-esc="o.month"/>
+                                        </div>
+                                    </t>
+                                    <t t-if="o.week_nu">
+                                        <div style="padding:0;width:50%;float:left;">
+                                           <b>Week Number:</b> <span t-esc="o.week_nu"/>
+                                        </div>
+                                    </t>
+                                </div>
+                                <hr style="border:1px solid black; width:100%" />
+                                <br/>
+                                <t t-foreach="method_value" t-as="m">
+                                    <div style="padding:0;width:100%;float:left;">
+                                        <b>Question:</b> <span t-esc="m['question']"/>
+                                    </div>
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Self Rating</th>
+                                                <th>Rating By Manager</th>
+                                                <th>Rating By HR</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td style="text-align:right"><span t-esc="m['self_rating']"/></td>
+                                                <td style="text-align:right"><span t-esc="m['manager_rating']"/></td>
+                                                <td style="text-align:right"><span t-esc="m['hr_rating']"/></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                               </t>
+                                <p style="page-break-after:always"></p>
+                            </t>
+                        </t>
+                    </div>
+                </t>
+                </t>
+            </t>
+        </template>
+
+    </data>
+</odoo>

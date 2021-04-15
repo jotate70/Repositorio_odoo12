@@ -1,0 +1,77 @@
+<odoo>
+    <data>
+
+        <record id="view_kra_schedule_plan_search" model="ir.ui.view">
+            <field name="name">kra.schedule.plan.search</field>
+            <field name="model">kra.schedule.plan</field>
+            <field name="arch" type="xml">
+                <search string="KRA Schedule Plan">
+                    <field name="department_id"/>
+                    <field name="job_id"/>
+                    <field name="interval"/>
+                    <field name="kra_template_id"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_department" string="Department" domain="[]" context="{'group_by':'department_id'}"/>
+                        <filter name="group_job" string="Job" domain="[]" context="{'group_by':'job_id'}"/>
+                        <filter name="group_interval" string="Interval" domain="[]" context="{'group_by':'interval'}"/>
+                    </group>
+                </search>
+             </field>
+         </record>
+
+        <record id="ir_cron_schedule_plan" model="ir.cron">
+            <field name="name">Employee Schedule Plan</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model_id" ref="model_kra_schedule_plan"/>
+            <field name="code">model._run_schedule_plan()</field>
+            <field name="state">code</field>
+        </record>
+
+        <record id="view_kra_schedule_plan_form" model="ir.ui.view">
+            <field name="name">kra.schedule.plan.form</field>
+            <field name="model">kra.schedule.plan</field>
+            <field name="arch" type="xml">
+                <form string="KRA Schedule Plan">
+                    <sheet>
+                        <group col="4">
+                            <field name="department_id" options="{'no_create': True}"/>
+                            <field name="job_id"  options="{'no_create': True}"/>
+                            <field name="interval"/>
+                            <field name="kra_template_id" domain="[('job_id','in',[job_id]),('department_id','in',[department_id]),('is_active','=',True)]"  options="{'no_create': True}"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_kra_schedule_plan_tree" model="ir.ui.view">
+            <field name="name">kra.schedule.plan.tree</field>
+            <field name="model">kra.schedule.plan</field>
+            <field name="arch" type="xml">
+                <tree>
+                     <field name="department_id"/>
+                    <field name="job_id"/>
+                    <field name="interval"/>
+                    <field name="kra_template_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="open_schedule_plan_action" model="ir.actions.act_window">
+            <field name="name">KRA Schedule Plan</field>
+            <field name="res_model">kra.schedule.plan</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem
+            id="menu_kra_schedule_plan_view"
+            action="open_schedule_plan_action"
+            parent="hr.menu_human_resources_configuration"
+            sequence="4"/>
+    </data>
+</odoo>

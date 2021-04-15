@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<template id="report_loan_summary">
+			<t t-foreach="docs" t-as="doc">
+				<t t-call="web.basic_layout">
+					<div class="page">
+						<div class="oe_structure" />
+						<div class="row">
+							<div class="col-xs-6">
+								<!-- <div t-field="doc.employee_id.name"/> -->
+							</div>
+						</div>
+						<div class="row mt32 mb32" id="informations">
+							<h3 class="col-xs-6">
+								<span t-field="doc.loan_id" />
+								<br />
+							</h3>
+							<div class="col-xs-6" style='padding-left: 33%;'>
+								<h3>
+									Name:
+									<span style="font-weight:normal"
+										t-field="doc.employee_id.name" />
+								</h3>
+							</div>
+						</div>
+						<br />
+						<table width='100%'>
+							<tbody>
+								<tr>
+									<td><b>Approved Date </b></td>
+									<td><b>Loan Amount</b></td>
+									<td><b>Interest Rate (%)</b></td>
+									<td><b>Terms</b></td>
+								</tr>
+								<tr>
+									<td><span t-field="doc.approve_date" /></td>
+									<td><p t-esc="'%.2f' % (doc.amount)"/></td>
+									<td><p t-esc="'%.2f' % (doc.rate)"/></td>
+									<td><p t-field="doc.term"/></td>
+								</tr>
+							</tbody>
+						</table>
+
+						<table class="table table-condensed table-bordered">
+							<thead>
+								<tr>
+									<th>Due Date</th>
+									<th class="text-right">Principal</th>
+									<th class="text-right">Interest Rate</th>
+									<th class="text-right">Monthly EMI</th>
+								</tr>
+							</thead>
+							<tbody class="loan_tbody">
+								<t t-foreach="doc.loan_payment_ids" t-as="l">
+									<tr>
+										<td>
+											<span t-field="l.due_date" />
+										</td>
+										<td class="text-right">
+											<span t-esc="'%.2f' % (l.principal)" />
+										</td>
+										<td class="text-right">
+											<span t-esc="'%.2f' %(l.interest)" />
+										</td>
+										<td class="text-right">
+											<span t-esc="'%.2f' %(l.total)" />
+										</td>
+									</tr>
+								</t>
+							</tbody>
+						</table>
+
+						<div class="row" name="total">
+							<div class="col-xs-4 pull-right">
+								<table class="table table-condensed">
+									<tr class="border-black">
+										<td>
+											<strong>Total Without Interest</strong>
+										</td>
+										<td class="text-right">
+											<span t-field="doc.total_principal_amt"
+												t-field-options='{"widget": "monetary", "display_currency": "doc.currency_id"}' />
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<strong>Interest</strong>
+										</td>
+										<td class="text-right">
+											<span t-field="doc.total_interest_amt"
+												t-field-options='{"widget": "monetary", "display_currency": "doc.currency_id"}' />
+										</td>
+									</tr>
+									<tr class="border-black">
+										<td>
+											<strong>Total</strong>
+										</td>
+										<td class="text-right">
+											<span t-field="doc.amount_total"
+												t-field-options='{"widget": "monetary", "display_currency": "doc.currency_id"}' />
+										</td>
+									</tr>
+								</table>
+							</div>
+						</div>
+
+						<p t-if="doc.loan_type_id.term_condition">
+							<span t-field="doc.loan_type_id.term_condition" />
+						</p>
+						<div class="oe_structure" />
+					</div>
+				</t>
+			</t>
+		</template>
+
+	</data>
+</openerp>

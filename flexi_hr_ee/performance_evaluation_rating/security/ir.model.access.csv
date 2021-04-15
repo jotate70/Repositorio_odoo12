@@ -1,0 +1,15 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_kra_template,access_kra_template,model_kra_template,base.group_user,1,0,0,0
+access_kra_schedule_plan,access_kra_schedule_plan,model_kra_schedule_plan,base.group_user,1,0,0,0
+access_kra_question,access_kra_question,model_kra_question,base.group_user,1,0,0,0
+access_kra_evaluation,access_kra_evaluation,model_kra_evaluation,base.group_user,1,1,0,0
+access_kra_question_rating,access_kra_question_rating,model_kra_question_rating,base.group_user,1,1,0,0
+access_kra_evaluation_wiz,access_kra_evaluation_wiz,model_kra_evaluation_wiz,base.group_user,1,0,0,0
+access_kra_analysis_report,access_kra_analysis_report,model_kra_analysis_report,base.group_user,1,0,0,0
+access_kra_template_hr,access_kra_template_hr,model_kra_template,hr.group_hr_manager,1,1,1,1
+access_kra_schedule_plan_hr,access_kra_schedule_plan_hr,model_kra_schedule_plan,hr.group_hr_manager,1,1,1,1
+access_kra_question_hr,access_kra_question_hr,model_kra_question,hr.group_hr_manager,1,1,1,1
+access_kra_evaluation_hr,access_kra_evaluation_hr,model_kra_evaluation,hr.group_hr_manager,1,1,1,1
+access_kra_question_rating_hr,access_kra_question_rating_hr,model_kra_question_rating,hr.group_hr_manager,1,1,1,1
+access_kra_evaluation_wiz_hr,access_kra_evaluation_wiz_hr,model_kra_evaluation_wiz,hr.group_hr_manager,1,1,1,1
+access_kra_analysis_report,access_kra_analysis_report,model_kra_analysis_report,hr.group_hr_manager,1,1,1,1

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="loan_calc_form" model="ir.ui.view">
+            <field name="name">loan.calc.form.view</field>
+            <field name="model">loan.calc</field>
+            <field name="arch" type="xml">
+                <form string="Loan Calculator">
+                    <group col="4">
+                         <field name="loan_amount" readonly="context.get('from_loan_app')"/>
+                         <field name="term"/>
+                         <field name="loan_type_id" options='{"no_open": True,"no_create": 1, "no_create_edit": 1}' readonly="context.get('from_loan_app')"/>
+                         <field name="method" readonly="context.get('from_loan_app')"/>
+                         <field name="company_id" invisible="1"/>
+                         <field name="currency_id" invisible="1"/>
+                     </group>
+                     <hr style="color: grey;border-top: 2px solid;"/>
+                     <table>
+                          <td style="min-height:20px;padding-left:100px"><field style="font-size:20px;" name="principal_amount" options='{"widget": "monetary", "display_currency": "currency_id"}'/> Loan Amount</td>
+                          <td style="font-size:20px;padding-right:40px;padding-left:10px">+</td>
+                          <td style="min-height:20px;padding-right:10px"><field style="font-size:20px" name="interest_amount" options='{"widget": "monetary", "display_currency": "currency_id"}'/> Interest Rate</td>
+                          <td style="font-size:20px;padding-right:40px;padding-left:10px">=</td>
+                          <td style="min-height:20px;padding-right:10px"><field style="font-size:20px" name="total_amount" options='{"widget": "monetary", "display_currency": "currency_id"}'/> Total</td>
+                     </table>
+                     <field name="loan_calc_line_ids" readonly="1">
+                        <tree string="Loan Calculator" limit="12" editable="bottom">
+                            <field name="due_date"/>
+                            <field name="method" invisible="1"/>
+                            <field name="principal" sum="Total" options='{"widget": "monetary", "display_currency": "currency_id"}'/>
+                            <field name="interest" sum="Total" options='{"widget": "monetary", "display_currency": "currency_id"}'/>
+                            <field name="interest_rate"/>
+                            <field name="total" sum="Total" options='{"widget": "monetary", "display_currency": "currency_id"}'/>
+                            <field name="balance_amt"/>
+                            <field name="currency_id" invisible="1"/>
+                        </tree>
+                    </field>
+                    <footer>
+                        <button name="get_payment_data" class="oe_highlight" string="Proceed" 
+                                type="object" invisible="not context.get('from_loan_app')"/>
+                        <!-- <label string="or" style="font-weight: normal;padding: 7px;" invisible="not context.get('from_loan_app')"/> -->
+                        <button string="Close" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_loan_calculator" model="ir.actions.act_window">
+            <field name="name">Loan Calculator</field>
+            <field name="res_model">loan.calc</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem action="action_loan_calculator" name="Loan Calculator" id="menu_loan_calculator"
+                  parent="main_menu_general" sequence="5" groups="base.user_root,hr.group_hr_manager,base.group_user"/>
+
+    </data>
+</openerp>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record id="weekly_off_group_form" model="ir.ui.view">
+            <field name="name">weekly.off.group.form</field>
+            <field name="model">weekly.off.group</field>
+            <field name="arch" type="xml">
+                <form string="Weekly Off Group">
+                    <div class="oe_title oe_left">
+                        <div class="oe_edit_only">
+                            <label for="name"/>
+                        </div>
+                        <h1>
+                            <field name="name" placeholder="Name" required="True"/>
+                        </h1>
+                    </div>
+                    <group col="4">
+                        <field name="start_date"/>
+                        <field name="end_date"/>
+                        <field name="active"/>
+                        <field name="based_on"/>
+                    </group>
+                    <group string="Days">
+                        <field name="sunday"/>
+                        <field name="monday"/>
+                        <field name="tuesday"/>
+                        <field name="wednesday"/>
+                        <field name="thursday"/>
+                        <field name="friday"/>
+                        <field name="saturday"/>
+                    </group>
+                    <group string="Groups" attrs="{'invisible': [('based_on', '!=', 'group')]}">
+                        <field name="res_group_ids" widget="many2many_tags" attrs="{'required': [('based_on', '=', 'group')]}"/>
+                    </group>
+                    <group string="Employees" attrs="{'invisible': [('based_on', '!=', 'employee')]}">
+                        <field name="employee_ids" nolabel="1" attrs="{'required': [('based_on', '=', 'employee')]}">
+                            <tree string="Employees" limit="12">
+                                <field name="name"/>
+                                <field name="work_phone"/>
+                                <field name="work_email"/>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                                <field name="department_id"/>
+                                <field name="job_id"/>
+                                <field name="parent_id"/>
+                                <field name="coach_id" invisible="1"/>
+                                <field name="message_needaction" invisible="1"/>
+                            </tree>
+                        </field>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="weekly_off_group_tree">
+            <field name="name">weekly.off.group.tree.view</field>
+            <field name="model">weekly.off.group</field>
+            <field name="arch" type="xml">
+                <tree string="weekly Off Group">
+                    <field name="name"/>
+                    <field name="start_date"/>
+                    <field name="end_date"/>
+                    <field name="active"/>
+                    <field name="sunday"/>
+                    <field name="monday"/>
+                    <field name="tuesday"/>
+                    <field name="wednesday"/>
+                    <field name="thursday"/>
+                    <field name="friday"/>
+                    <field name="saturday"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_weekly_off_group" model="ir.actions.act_window">
+            <field name="name">Weekly Off Settings</field>
+            <field name="res_model">weekly.off.group</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        
+
+        <menuitem name="Weekly Off Group" parent="menu_hr_leaves_configuration"
+        sequence="13" id="menu_weekly_off_group" action="action_weekly_off_group"/>
+
+    </data>
+</openerp>

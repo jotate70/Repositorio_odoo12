@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="email_template_for_refuse_leave_request" model="mail.template">
+            <field name="name">For Refuse Leave Request</field>
+            <field name="model_id" ref="hr_holidays.model_hr_holidays" />
+            <field name="email_from">${user.email or ''}</field>
+            <field name="email_to">${object.user_id.email or ''}</field>
+            <field name="subject">Regarding Leave Cancellation</field>
+            <field name="body_html"><![CDATA[<p>Hello ${object.employee_id.user_id.name or ''}<br/>
+            Your leave has been cancelled from ${object.date_from or ''} to ${object.date_to or ''}<br/>.</p>
+
+Thank You <br/>
+${user.name or ''}
+]]></field>
+        </record>
+
+    </data>
+
+    
+
+</openerp>
