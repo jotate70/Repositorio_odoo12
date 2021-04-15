@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="hr_employee_penalty_detail_from_view" model="ir.ui.view">
+            <field name="name">HR Employee</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet/div/button[@name='toggle_active']" position="after">
+                    <button name="late_coming_penalty" type="object" class="oe_stat_button" icon="fa-clock-o">
+                        <field string="Late Penalty" name="panelty_count" widget="statinfo"/>
+                    </button>
+                </xpath>
+            </field>
+        </record>
+
+		<record id="hr_penalty_detail_tree_view" model="ir.ui.view">
+            <field name="name">Late Coming Penalty Details</field>
+            <field name="model">employee.late.penalty</field>
+            <field name="arch" type="xml">
+      			<tree string="Late Coming Penalty Details">
+      				<field name="employee_id"/>
+      				<field name="date"/>
+      				<field name="check_in"/>
+      				<field name="late_min"/>
+      				<field name="difference"/>
+      				<field name="penalty_amt"/>
+      				<field name="payslip_id"/>
+      				<field name="state"/>
+      			</tree>
+            </field>
+        </record>
+
+        <record id="hr_penalty_detail_form_view" model="ir.ui.view">
+            <field name="name">employee.late.penalty</field>
+            <field name="model">employee.late.penalty</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="approved" class="oe_highlight" string="Approve"
+                                type="object" groups="hr.group_hr_manager" attrs="{'invisible':[('state','in',['deduct','approve','cancel'])]}"/>
+                        <button name="cancel" class="oe_highlight" string="Cancel"
+                                type="object" groups="hr.group_hr_manager" attrs="{'invisible':[('state','in',['deduct','approve','cancel'])]}"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,approve,cancel,deduct"/>
+                    </header>
+                    <sheet>
+                        <group col="4">
+                            <field name="employee_id" attrs="{'readonly':[('state','=','approve')]}"/>
+                            <field name="date" attrs="{'readonly':[('state','=','approve')]}"/>
+                            <field name="check_in" attrs="{'readonly':[('state','=','approve')]}"/>
+                            <field name="late_min" attrs="{'readonly':[('state','=','approve')]}"/>
+                            <field name="difference" attrs="{'readonly':[('state','=','approve')]}"/>
+                            <field name="penalty_amt" attrs="{'readonly':[('state','=','approve')]}"/>
+                            <field name="payslip_id" attrs="{'readonly':[('state','=','approve')]}"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+         <record id="action_hr_panelty_form_view" model="ir.actions.act_window">
+            <field name="name">HR Penalty</field>
+            <field name="res_model">employee.late.penalty</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem
+            id="hr_menu_late_panelty"
+            name="HR Penalty"
+            action="action_hr_panelty_form_view"
+            parent="hr.menu_hr_root"
+            sequence="5"
+            />
+
+    </data>
+</odoo>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_hr_payslip_penalty_detail_form" model="ir.ui.view">
+            <field name="name">hr.payslip.form</field>
+            <field name="model">hr.payslip</field>
+            <field name="inherit_id" ref="hr_payroll.view_hr_payslip_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook/page/group" position="after">
+                    <separator string="Penalty"/>
+                    <field name="emp_penalty_ids" invisible="1">
+                        <tree string="Penalty" editable="bottom" create="0" limit="10">
+                             <field name="date"/>
+               				 <field name="check_in"/>
+               				 <field name="late_min"/>
+               				 <field name="penalty_amt"/>
+                         </tree>
+                    </field>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

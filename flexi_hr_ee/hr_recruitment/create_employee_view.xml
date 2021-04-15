@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+
+		<record id="create_employee_wiz_form_view" model="ir.ui.view">
+			<field name="name">Create Employee Entry/Contract</field>
+			<field name="model">create.employee</field>
+			<field name="arch" type="xml">
+				<form>
+					<sheet>
+						<group>
+							<group>
+								<field name="contract_id" readonly="1" />
+								<newline />
+								<field name="application_for" required="1" />
+								<newline />
+								<field name="stipend"
+									attrs="{'invisible': [('application_for', '!=', 'trainee')]}" />
+								<field name="contract" invisible="1" />
+							</group>
+						</group>
+						<group col="4" string="Contract Details"
+							attrs="{'invisible': [('stipend', '!=', True), ('contract', '!=',True)]}">
+							<field name="contract_name"
+								attrs="{'required': ['|', ('stipend', '!=', False), ('contract', '!=', False)]}" />
+							<field name="contract_type_id"
+								attrs="{'required': ['|', ('stipend', '!=', False), ('contract', '!=', False)]}" />
+							<field name="struct_id"
+								attrs="{'required': ['|', ('stipend', '!=', False), ('contract', '!=', False)]}" />
+							<field name="wage"
+								attrs="{'required': ['|', ('stipend', '!=', False), ('contract', '!=', False)]}" />
+							<field name="contract_date_start"
+								attrs="{'required': ['|', ('stipend', '!=', False), ('contract', '!=', False)]}" />
+							<field name="contract_date_end" attrs="{'required': [('stipend', '!=', False)]}" />
+							<field name="resource_id"
+								attrs="{'required': ['|', ('stipend', '!=', False), ('contract', '!=', False)]}" />
+						</group>
+						<footer>
+							<button name="create_employee_custom" type="object"
+								string="Create" />
+							or
+							<button string="Cancel" special="cancel" />
+						</footer>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record id="employee_training_history_form_view" model="ir.ui.view">
+			<field name="name">Extend Employee Training</field>
+			<field name="model">employee.training.history</field>
+			<field name="arch" type="xml">
+				<form>
+					<sheet>
+						<group col="4">
+							<field name="employee_id" invisible="1" />
+							<newline />
+							<field name="start_date" readonly="1" />
+							<field name="end_date" />
+							<newline />
+							<field name="duration" />
+						</group>
+						<group>
+							<field name="reason" />
+						</group>
+					</sheet>
+					<footer>
+						<button name="extend_training_save" type="object" string="Save"/>
+						or
+						<button string="Cancel" special="cancel" />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<record id="inherited_trainee_hr_employee_inherit_form_view1"
+			model="ir.ui.view">
+			<field name="name">HR Employee</field>
+			<field name="model">hr.employee</field>
+			<field name="inherit_id"
+				ref="flexi_hr_ee.aspl_checklist_hr_employee_inherit_form_view" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='employee_status']" position="before">
+					<button name="create_entry" class="oe_highlight" type="object"
+						string="Entry Process" attrs="{'invisible': [('emp_entry', '=', True)]}" />
+				</xpath>
+				<xpath expr="//field[@name='user_id']" position="after">
+					<field name="join_date" />
+					<field name="release_date" />
+					<field name="entry_id" invisible="1" />
+					<field name="emp_entry" invisible="1" />
+					<field name="is_trainee" invisible="1" />
+				</xpath>
+				<xpath expr="//page[@name='hr_settings']" position="after">
+					<page string="Trainee" attrs="{'invisible': [('is_trainee', '=', False)]}">
+						<group string="Trainee Details" col="4">
+							<field name="trainee_start_date" readonly="1" />
+							<field name="trainee_end_date" readonly="1" />
+						</group>
+						<button class="oe_highlight oe_right" name="extend_period"
+							type="object" string="Extend Training"
+							attrs="{'invisible': [('employee_status', '!=', 'trainee')]}" groups="hr.group_hr_manager"/>
+						<group>
+							<field name="training_history_ids" nolabel="1" readonly="1">
+								<tree create="0" delete="0">
+									<field name="start_date" />
+									<field name="end_date" />
+									<field name="duration" sum="Total Days" />
+								</tree>
+							</field>
+						</group>
+					</page>
+				</xpath>
+				<xpath expr="//page[@name='hr_settings']" position="after">
+					<page string="Other Information">
+						<group col="4">
+							<field name="benefit_ids" widget="many2many_tags"/>
+							<field name="certificate_ids" widget="many2many_tags"/>
+							<label for="perm_street" string="Permanent Address"/>
+                            <div class="o_address_format">
+                                <field name="perm_street" placeholder="Street..." class="o_address_street"/>
+                                <field name="perm_street2" placeholder="Street 2..." class="o_address_street"/>
+                                <field name="perm_city" placeholder="City" class="o_address_city"/>
+                                <field name="perm_state_id" class="o_address_state" placeholder="State" options="{&quot;no_open&quot;: True}"/>
+                                <field name="perm_zip" placeholder="ZIP" class="o_address_zip"/>
+                                <field name="perm_country_id" placeholder="Country" class="o_address_country" options="{&quot;no_open&quot;: True}"/>
+                            </div>
+                            <label for="pre_street" string="Present Street"/>
+                            <div class="o_address_format">
+                                <field name="pre_street" placeholder="Street..." class="o_address_street"/>
+                                <field name="pre_street2" placeholder="Street 2..." class="o_address_street"/>
+                                <field name="pre_city" placeholder="City" class="o_address_city"/>
+                                <field name="pre_state_id" class="o_address_state" placeholder="State" options="{&quot;no_open&quot;: True}"/>
+                                <field name="pre_zip" placeholder="ZIP" class="o_address_zip"/>
+                                <field name="pre_country_id" placeholder="Country" class="o_address_country" options="{&quot;no_open&quot;: True}"/>
+                            </div>
+                            <field name="type_ids" widget="many2many_tags"/>
+						</group>
+						<group string="Family Details">
+							<field name="family_member_ids" nolabel="1">
+								<tree>
+									<field name="name"/>
+									<field name="relation"/>
+								</tree>
+							</field>
+						</group>
+					</page>
+				</xpath>
+			</field>
+		</record>
+
+	</data>
+</odoo>

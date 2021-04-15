@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+<!--         <record id="employee_event_search_view" model="ir.ui.view"> -->
+<!--             <field name="name">employee.event.form</field> -->
+<!--             <field name="model">employee.event</field> -->
+<!--             <field name="arch" type="xml"> -->
+<!--                 <search string="Events"> -->
+<!--                     <field name="name" string="Events"/> -->
+<!--                     <separator/> -->
+<!--                     <filter string="Unconfirmed" name="draft" domain="[('state','=','draft')]"/> -->
+<!--                     <filter name="confirm" string="Confirmed" domain="[('state','=','confirm')]"/> -->
+<!--                     <separator/> -->
+<!--                     <filter string="Upcoming" name="upcoming" -->
+<!--                         domain="['&amp;', ('state', '!=', 'cancel'), ('start_date','&gt;=', datetime.datetime.combine(context_today(), datetime.time(0,0,0)))]"/> -->
+<!--                     <field name="employee_event_type_id"/> -->
+<!--                     <field name="user_id"/> -->
+<!--                     <separator/> -->
+<!--                     <group expand="0" string="Group By"> -->
+<!--                         <filter string="Responsible" context="{'group_by': 'user_id'}"/> -->
+<!--                         <filter string="Event Category" context="{'group_by':'employee_event_type_id'}"/> -->
+<!--                         <filter string="Status" context="{'group_by':'state'}"/> -->
+<!--                         <filter string="Start Month" domain="[]" context="{'group_by':'start_date'}"/> -->
+<!--                     </group> -->
+<!--                 </search> -->
+<!--             </field> -->
+<!--         </record> -->
+
+        <record id="employee_event_form_view" model="ir.ui.view">
+            <field name="name">employee.event.form</field>
+            <field name="model">employee.event</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button string="Confirm Event" name="button_confirm" states="draft" type="object" class="oe_highlight" groups="base.group_user"/>
+                        <button string="Complete Event" name="button_done" states="confirm" type="object" class="oe_highlight" groups="base.group_user"/>
+                        <button string="Cancel Event" name="button_cancel" states="draft,confirm" type="object" groups="base.group_user" confirm="Are you sure you want to cancel this event? All the linked attendees will be cancelled as well."/>
+                        <button string="Extend Event" name="button_event_extend" type="object" attrs="{'invisible':[('state','in',['cancel','done','draft'])]}"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirm,done"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button" icon="fa-users" type="action"
+                                attrs="{'invisible':[('state','in',('draft','cancel'))]}"
+                                name="%(flexi_hr_ee.action_employee_event_participant)d">
+                                <field name="attendance_count" widget="statinfo"/>
+                            </button>
+                            <button class="oe_stat_button" icon="fa-inbox" type="action"
+                                attrs="{'invisible':[('state','in',('draft','cancel'))]}"
+                                name="%(flexi_hr_ee.action_employee_event_track)d" >
+                                <field name="track_count" widget="statinfo"/>
+                            </button>
+                            <button class="oe_stat_button" icon="fa-star" type="object"
+                                attrs="{'invisible':[('state','in',('draft','cancel'))]}" name="event_review">
+                                <field name="total_rating_count" widget="statinfo"/>
+                            </button>
+                        </div>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1><field name="name" placeholder="Event Name"
+                                       attrs="{'readonly':[('state','!=','draft')]}" required="1"/>
+                           </h1>
+                            <field name="event_type" required="1" widget="radio"
+                                 options="{'horizontal': 1}" attrs="{'readonly':[('state','!=','draft')]}"/>
+                        </div>
+                        <group>
+                            <group>
+                                <label for="street" string="Address"/>
+                                <div class="o_address_format">
+                                    <field name="street" placeholder="Street..." class="o_address_street" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                    <field name="street2" placeholder="Street 2..." class="o_address_street" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                    <field name="city" placeholder="City" class="o_address_city" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                    <field name="state_id" class="o_address_state" placeholder="State" options="{&quot;no_open&quot;: True}" context="{'country_id': country_id, 'zip': zip}" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                    <field name="zip" placeholder="ZIP" class="o_address_zip" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                    <field name="country_id" placeholder="Country" class="o_address_country" options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                </div>
+                            </group>
+                            <group>
+                                <field name="company_id" groups="base.group_multi_company" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="user_id" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="employee_event_type_id" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="auto_subscribe" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            </group>
+                            <group>
+                                <field name="start_date" required="1" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="end_date" required="1" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            </group>
+                            <group>
+                                <field name="seats_min" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <label for="seats_availability"/>
+                                <div>
+                                    <field name="seats_availability" widget='radio' options="{'horizontal': 1}" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                    <span  attrs="{'invisible': [('seats_availability', '=', 'unlimited')]}" class="oe_read_only">
+                                        to 
+                                    </span>
+                                    <field name="seats_max" attrs="{'invisible': [('seats_availability', '=', 'unlimited')], 'required': [('seats_availability', '=', 'limited')],'readonly':[('state','!=','draft')]}" />
+                                </div>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Participants">
+                                <field name="event_participant_ids" readonly="1">
+                                    <tree editable="bottom">
+                                        <field name="employee_event_id" invisible="1"/>
+                                        <field name="employee_id"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Note">
+                                <separator string="Cancellation Reason"/>
+                                <field name="cancel_note" readonly="1"/>
+                                <separator string="Extend Reason"/>
+                                <field name="extend_note" readonly="1"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="employee_event_tree_view">
+            <field name="name">employee.event.tree</field>
+            <field name="model">employee.event</field>
+            <field name="arch" type="xml">
+                <tree string="Events">
+                    <field name="name"/>
+                    <field name="start_date"/>
+                    <field name="end_date"/>
+                    <field name="seats_min"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_employee_event_view" model="ir.actions.act_window">
+           <field name="name">Employee Events</field>
+           <field name="type">ir.actions.act_window</field>
+           <field name="res_model">employee.event</field>
+           <field name="view_type">form</field>
+           <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem name="Employee Events" id="menu_employee_event" parent="hr.menu_hr_root"
+                  groups="hr.group_hr_manager"/>
+
+        <menuitem name="Events" id="submenu_employee_event" action="action_employee_event_view"
+                  parent="menu_employee_event" groups="hr.group_hr_manager"/>
+
+    </data>
+</odoo>

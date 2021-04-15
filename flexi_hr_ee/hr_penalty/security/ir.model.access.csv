@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_employee_late_penalty,access_employee_late_penalty,model_employee_late_penalty,base.group_user,1,1,1,0

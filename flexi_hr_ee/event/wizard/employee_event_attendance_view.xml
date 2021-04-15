@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="employee_event_attendance_form_view" model="ir.ui.view">
+            <field name="name">employee.event.attendance.form</field>
+            <field name="model">employee.event.attendance</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <field name="event_id" domain="[('state','=','confirm')]" options="{'no_create':True}"/>
+                        <field name="department_ids" widget="many2many_tags" options="{'no_create':True}"/>
+                        <field name="job_ids" widget="many2many_tags"
+                               options="{'no_create':True}" context="{'department_ids':department_ids}"/>
+                        <field name="employee_ids" widget="many2many_tags"
+                               options="{'no_create':True}" context="{'job_position_ids':job_ids,'department_ids':department_ids,'event_id':event_id}"/>
+                    </group>
+                    <footer>
+                        <button name="confirm_attendance" type="object" string="Confirm"/>
+                        or
+                        <button string="Cancel" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_employee_attendance_view" model="ir.actions.act_window">
+           <field name="name">Employee Attendance</field>
+           <field name="type">ir.actions.act_window</field>
+           <field name="res_model">employee.event.attendance</field>
+           <field name="view_type">form</field>
+           <field name="view_mode">form</field>
+           <field name="target">new</field>
+        </record>
+
+        <menuitem name="Events Attendance" id="menu_employee_attendance"
+                  action="action_employee_attendance_view" parent="menu_employee_event"
+                  groups="hr.group_hr_manager"/>
+
+         <record id="wizard_cancel_event_form_view" model="ir.ui.view">
+            <field name="name">wizard.cancel.event.form</field>
+            <field name="model">wizard.cancel.event</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                         <field name="end_date" required="context.get('from_extend_event')" invisible="context.get('from_cancel_event')"/>
+                         <field name="name" required="1"/>
+                     </group>
+                     <footer>
+                        <button string="Confirm" name="cancel_event" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+
+		<record id="view_hr_payslip_overtime_form" model="ir.ui.view">
+			<field name="name">hr.payslip.form</field>
+			<field name="model">hr.payslip</field>
+			<field name="inherit_id" ref="hr_payroll.view_hr_payslip_form" />
+			<field name="arch" type="xml">
+				<xpath expr="//notebook/page/group" position="after">
+					<separator string="Overtime" />
+					<field name="employee_overtime_ids">
+						<tree string="Overtime" editable="bottom" create="0">
+							<field name="date" />
+							<field name="based_on" />
+							<field name="ot_rate" />
+							<field name="overtime" />
+						</tree>
+					</field>
+				</xpath>
+			</field>
+		</record>
+
+	</data>
+</odoo>

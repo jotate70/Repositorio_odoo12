@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="view_employee_event_tree">
+            <field name="name">employee.event.participant.tree</field>
+            <field name="model">employee.event.participant</field>
+            <field name="priority" eval="2"/>
+            <field name="arch" type="xml">
+                <tree create="0" delete="0">
+                    <field name="employee_event_id"/>
+                    <field name="state"/>
+                    <field name="start_date"/>
+                    <field name="end_date"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_employee_event_participant_tree">
+            <field name="name">employee.event.participant.tree</field>
+            <field name="model">employee.event.participant</field>
+            <field name="priority" eval="1"/>
+            <field name="arch" type="xml">
+                <tree create="0" delete="0">
+                    <field name="employee_id"/>
+                    <field name="employee_event_id" invisible="1"/>
+                    <field name="state"/>
+                    <button name="make_subscribe" string="Subscribe" states="unsubscribe" icon="fa-check text-success" type="object"/>
+                    <button name="make_unsubscribe" string="unsubscribe Participant" states="subscribe" icon="fa-times-circle text-danger" type="object"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_employee_event_participant" model="ir.actions.act_window">
+            <field name="res_model">employee.event.participant</field>
+            <field name="name">Participant</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="domain">[('employee_event_id','=',context.get('active_id'))]</field>
+        </record>
+        
+    </data>
+</odoo>

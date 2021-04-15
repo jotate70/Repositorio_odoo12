@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="view_employee_event_track_form">
+            <field name="name">employee..event.track.form</field>
+            <field name="model">employee.event.track</field>
+            <field name="arch" type="xml">
+                <form string="Event Track" duplicate="0" delete="0">
+                    <sheet string="Track">
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name" placeholder="e.g. Inspiring Business Talk"/>
+                            </h1>
+                            <label for="event_id" class="oe_edit_only"/>
+                            <h3>
+                                <field name="event_id" options="{'no_create':True}" readonly="1"/>
+                            </h3>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="event_type" invisible="1"/>
+                                <field name="user_id" invisible="1"/>
+                                <field name="employee_id" attrs="{'invisible':[('event_type','=','Public')]}" context="{'event_id':event_id}"/>
+                                <field name="speaker_name" required="1"/>
+                                <field name="speaker_email"/>
+                                <field name="speaker_phone"/>
+                            </group>
+                            <group>
+                                <field name="start_date" required="1"/>
+                                <field name="end_date" required="1"/>
+                                <label for="duration"/>
+                                <div>
+                                    <field name="duration" class="oe_inline"/> hours
+                                </div>
+                                <label for="minutes"/>
+                                <div>
+                                    <field name="minutes" class="oe_inline"/> minutes
+                                </div>
+                            </group>
+                            <field name="description" placeholder="Summary"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_employee_event_track_tree">
+            <field name="name">employee.event.track.tree</field>
+            <field name="model">employee.event.track</field>
+            <field name="arch" type="xml">
+                <tree string="Event Track" delete="0">
+                    <field name="name"/>
+                    <field name="event_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_employee_event_track" model="ir.actions.act_window">
+            <field name="res_model">employee.event.track</field>
+            <field name="name">Event Tracks</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'default_event_id': active_id}</field>
+            <field name="domain">[('event_id','=',active_id)]</field>
+        </record>
+        
+    </data>
+</odoo>

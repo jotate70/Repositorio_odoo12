@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="wizard_employee_event_form_view" model="ir.ui.view">
+            <field name="name">wizard.employee.event.form</field>
+            <field name="model">wizard.employee.event</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="event_type" widget="radio" options="{'horizontal': 1}"/>
+                        </group>
+                        <hr style="color: grey;border-top: 2px solid;"/>
+                        <br/>
+                        <field name="employee_event_lines" nolabel="1">
+                            <tree editable="bottom" create="0" delete="0">
+                                <field name="employee_event_id" readonly="1"/>
+                                <field name="start_date" readonly="1"/>
+                                <field name="end_date" readonly="1"/>
+                                <button name="join_event" type="object" string="Join" icon="fa fa-hand-o-up"/>
+                            </tree>
+                        </field>
+                    </sheet>
+                    <footer>
+                        <button string="Close" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="wizard_employee_event_rating_form_view" model="ir.ui.view">
+            <field name="name">Employee Event Rate</field>
+            <field name="model">employee.event.rating</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <field name="employee_event_id" required="1" options="{'no_create':True}"/>
+                        <field name="rating" widget="priority"/>
+                        <field name="review"/>
+                        <field name="rating_readonly" invisible="1"/>
+                        <field name="employee_id" invisible="1"/>
+                    </group>
+                    <footer>
+                        <button string="Confirm" name="add_event_rating" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="employee_rating_kanban_view" model="ir.ui.view">
+            <field name="name">employee.event.rating.kanban</field>
+            <field name="model">employee.event.rating</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile" create="0">
+                    <field name="employee_id"/>
+                    <field name="review"/>
+                    <field name="rating"/>
+                    <field name="rating_readonly"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                <div class="o_kanban_record_top mb16">
+                                    <div class="o_kanban_record_headings mt4">
+                                        <strong class="o_kanban_record_title"><span><t t-esc="record.employee_id.value"/></span></strong>
+                                    </div>
+                                    <strong><field name="rating_readonly" widget="priority"/></strong>
+                                </div>
+                                <div class="o_kanban_record_bottom">
+                                    <div class="oe_kanban_bottom_left text-muted">
+                                        <span><t t-esc="record.review.value"/></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        
+    </data>
+</odoo>

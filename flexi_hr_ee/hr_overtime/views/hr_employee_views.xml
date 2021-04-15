@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+		<record id="aspl_hr_employee_inherit_from_view" model="ir.ui.view">
+			<field name="name">HR Employee</field>
+			<field name="model">hr.employee</field>
+			<field name="inherit_id" ref="hr.view_employee_form"/>
+			<field name="arch" type="xml">
+				<xpath expr="//button[@name='toggle_active']" position="after">
+					<div class="oe_button_box" name="button_box"
+						groups="base.group_user">
+						<button name="related_overtime_view"
+							class="oe_stat_button" icon="fa-clock-o"
+							type="object">
+							<field name="overtime_count" widget="statinfo"
+								string="Overtime" />
+						</button>
+					</div>
+				</xpath>
+				<xpath expr="//page[@name='hr_settings']" position="inside">
+					<group>
+						<group string="Overtime Pay" name="aspl_hr_overtime">
+							<field name="weekday_ot_rate" readonly="1"/>
+							<field name="weekend_ot_rate" readonly="1"/>
+						</group>
+					</group>
+				</xpath>
+			</field>
+		</record>
+
+<!-- 		<record id="hr_mngr_aspl_hr_employee_inherit_from_view" model="ir.ui.view"> -->
+<!-- 			<field name="name">HR Employee</field> -->
+<!-- 			<field name="model">hr.employee</field> -->
+<!-- 			<field name="inherit_id" ref="flexi_hr_ee.aspl_hr_employee_inherit_from_view"/> -->
+<!-- 			<field name="groups_id" eval="[(6, 0, [ref('hr.group_hr_manager')])]" /> -->
+<!-- 			<field name="arch" type="xml"> -->
+<!-- 				<xpath expr="//field[@name='weekday_ot_rate']" position="attributes"> -->
+<!-- 					<attribute name="readonly">0</attribute> -->
+<!-- 				</xpath> -->
+<!-- 				<xpath expr="//field[@name='weekend_ot_rate']" position="attributes"> -->
+<!-- 					<attribute name="readonly">0</attribute> -->
+<!-- 				</xpath> -->
+<!-- 			</field> -->
+<!-- 		</record> -->
+	</data>
+</odoo>

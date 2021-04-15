@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_penalty_res_config_setting_form" model="ir.ui.view">
+            <field name="name">res.penalty.config.settings.view.form.inherit.hr</field>
+            <field name="model">res.config.settings</field>
+            <field name="priority" eval="71" />
+            <field name="inherit_id" ref="hr.res_config_settings_view_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//div[hasclass('settings')]/div[@class='app_settings_block'][@data-string='Employees']"
+                    position="inside">
+                    <h2>HR Panelty Settings</h2>
+                         <div class="row mt16 o_settings_container">
+                            <div class="col-xs-12 col-md-6 o_setting_box">
+                                <div class="o_setting_right_pane">
+                                    <label for="allow_late_mins"/>
+                                    <div class="content-group">
+                                        <field name="allow_late_mins" class="o_light_label"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-md-6 o_setting_box">
+                                <div class="o_setting_right_pane">
+                                    <label for="penalty_amount"/>
+                                    <div class="content-group">
+                                        <field name="penalty_amount" class="o_light_label"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-md-6 o_setting_box">
+                                <div class="o_setting_right_pane">
+                                    <label for="apply_penalty_after"/>
+                                    <div class="content-group">
+                                        <field name="apply_penalty_after" class="o_light_label"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-md-6 o_setting_box">
+                                <div class="o_setting_right_pane">
+                                    <label for="rule_to_count_leave"/>
+                                    <div class="content-group">
+                                        <field name="rule_to_count_leave" class="o_light_label"/>
+                                    </div>
+                                </div>
+                            </div>
+                             <div class="col-xs-12 col-md-6 o_setting_box" attrs="{'invisible':[('rule_to_count_leave','=',False)]}">
+                                <div class="o_setting_right_pane">
+                                    <label for="apply_panelty_on_leave"/>
+                                    <div class="content-group">
+                                        <field name="apply_panelty_on_leave" class="o_light_label"/>
+                                    </div>
+                                </div>
+                            </div>
+                         </div>
+                </xpath>
+            </field>
+
+        </record>
+    </data>
+</odoo>

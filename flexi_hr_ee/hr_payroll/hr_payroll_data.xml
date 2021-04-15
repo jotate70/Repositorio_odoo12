@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data noupdate="0">
+
+		<record id="hr_rule_checklist" model="hr.salary.rule">
+	        <field name="name">Checklist Last Salary Deduction</field>
+	        <field name="sequence" eval="1"/>
+	        <field name="code">CHKLST-LAST</field>
+	        <field name="category_id" ref="hr_payroll.DED"/>
+	        <field name="condition_select">none</field>
+	        <field name="amount_select">code</field>
+	        <field name="amount_python_compute">result = 0.0
+if payslip.product_line_ids:
+    for each in payslip.product_line_ids:
+        result += (each.charged_amt) * -1
+else:
+    result = 0.0
+	        </field>
+	        <field name="register_id" ref="hr_payroll.contrib_register_employees"/>
+	    </record>
+
+		<record id="hr_rule_cheque" model="hr.salary.rule">
+			<field name="name">Advance Salary Deduction</field>
+			<field name="sequence" eval="1" />
+			<field name="code">EMI-ADV</field>
+			<field name="category_id" ref="hr_payroll.DED" />
+			<field name="condition_select">none</field>
+			<field name="amount_select">code</field>
+			<field name="amount_python_compute">result = 0.0
+if payslip.salary_pay_ids:
+    for each in payslip.salary_pay_ids:
+        result += (each.amount) * -1
+else:	
+    result = 0.0
+			</field>
+			<field name="register_id" ref="hr_payroll.contrib_register_employees" />
+		</record>
+
+		<record id="hr_rule_next_salary" model="hr.salary.rule">
+			<field name="name">Advance Salary Payment</field>
+			<field name="sequence" eval="1" />
+			<field name="code">ADV</field>
+			<field name="category_id" ref="hr_payroll.BASIC" />
+			<field name="condition_select">none</field>
+			<field name="amount_select">code</field>
+			<field name="amount_python_compute">result = 0.0
+if payslip.adv_sal_req_ids:
+    for each1 in payslip.adv_sal_req_ids:
+        result += each1.approved_amt *1
+else:
+    result = 0.0
+			</field>
+			<field name="register_id" ref="hr_payroll.contrib_register_employees" />
+		</record>
+
+<!-- 		<record id="hr_rule_overtime" model="hr.salary.rule"> -->
+<!-- 			<field name="name">Overtime Add In Salary Payment</field> -->
+<!-- 			<field name="sequence" eval="1" /> -->
+<!-- 			<field name="code">Overtime</field> -->
+<!-- 			<field name="category_id" ref="hr_payroll.BASIC" /> -->
+<!-- 			<field name="condition_select">none</field> -->
+<!-- 			<field name="amount_select">code</field> -->
+<!-- 			<field name="amount_python_compute">result = 0.0 -->
+<!-- if payslip.total_ot_hours and employee.ot_rate_per_hour: -->
+<!--         result = payslip.total_ot_hours * employee.ot_rate_per_hour -->
+<!-- elif payslip.total_ot_hours and employee.job_id.ot_rate_per_hour: -->
+<!--         result = payslip.total_ot_hours * employee.job_id.ot_rate_per_hour -->
+<!-- else: -->
+<!--     result = 0.0 -->
+<!-- 			</field> -->
+<!-- 			<field name="register_id" ref="hr_payroll.contrib_register_employees" /> -->
+<!-- 		</record> -->
+
+		<record id="hr_rule_cut_unpaid_leave" model="hr.salary.rule">
+			<field name="name">Cut the unpaid leave Amount From Salary Payment</field>
+			<field name="sequence" eval="1" />
+			<field name="code">Unpaid</field>
+			<field name="category_id" ref="hr_payroll.BASIC" />
+			<field name="condition_select">none</field>
+			<field name="amount_select">code</field>
+			<field name="amount_python_compute">result = 0.0
+if payslip.total_working_days:
+        result = -(contract.wage / payslip.total_working_days) * payslip.unpaid_leave_count
+else:
+    result = 0.0
+			</field>
+			<field name="register_id" ref="hr_payroll.contrib_register_employees" />
+		</record>
+
+		<record id="hr_rule_new_basic" model="hr.salary.rule">
+			<field name="name">Basic with Hourly Calculation</field>
+			<field name="sequence" eval="1" />
+			<field name="code">Basic with HC</field>
+			<field name="category_id" ref="hr_payroll.BASIC" />
+			<field name="condition_select">none</field>
+			<field name="amount_select">code</field>
+			<field name="amount_python_compute">result = 0.0
+if contract.is_hourly_pay and payslip.total_hours:
+	result = contract.wage * int(payslip.total_hours.split(':')[0])
+else:
+	result = contract.wage
+			</field>
+			<field name="register_id" ref="hr_payroll.contrib_register_employees" />
+		</record>
+
+		<record id="hr_rule_loan_emi_dec" model="hr.salary.rule">
+			<field name="name">Loan</field>
+			<field name="sequence" eval="1" />
+			<field name="code">EMI-Loan</field>
+			<field name="category_id" ref="hr_payroll.DED" />
+			<field name="condition_select">none</field>
+			<field name="amount_select">code</field>
+			<field name="amount_python_compute">result = 0.0
+if payslip.loan_paymet_ids:
+	for loan in payslip.loan_paymet_ids:
+		result += (loan.total) * -1
+else:
+	result = 0.0
+			</field>
+			<field name="register_id" ref="hr_payroll.contrib_register_employees" />
+		</record>
+
+	</data>
+</odoo>

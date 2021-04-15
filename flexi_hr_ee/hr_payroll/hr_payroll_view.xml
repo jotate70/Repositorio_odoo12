@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_hr_payslip_form_aces" model="ir.ui.view">
+            <field name="name">hr.payslip.form</field>
+            <field name="model">hr.payslip</field>
+            <field name="inherit_id" ref="hr_payroll.view_hr_payslip_form"/>
+            <field name="arch" type="xml">
+            	<xpath expr="//field[@name='employee_id']" position="attributes">
+            		<attribute name="context">{'from_payslip': True}</attribute>
+            		<attribute name="options">{'no_create': True}</attribute>
+            	</xpath>
+            	<field name="contract_id" position="attributes">
+            		<attribute name="required">1</attribute>
+            	</field>
+                <xpath expr="//notebook/page/field[@name='line_ids']/tree/field[@name='amount']" position="attributes">
+                    <attribute name="readonly">True</attribute>
+                </xpath>
+                <xpath expr="//notebook/page/group" position="after">
+                    <separator string="Salary Payments" invisible="1"/>
+                    <field name="salary_pay_ids" invisible="1">
+                        <tree string="Salary Payment" editable="top">
+                            <field name="date"/>
+                            <field name="amount"/>
+                            <field name="payslip_id"/>
+                            <field name="state"/>
+                        </tree>
+                    </field>
+                    <separator string="Advance Payment" invisible="1"/>
+                    <field name="adv_sal_req_ids" invisible="1"/>
+                </xpath>
+                <xpath expr="//notebook/page/group" position="after">
+                    <separator string="Loan EMI"/>
+                    <field name="loan_paymet_ids">
+                        <tree string="Loan Payment" editable="bottom" create="0" limit="10">
+                             <field name="due_date" readonly="1"/>
+                             <field name="principal" readonly="1"/>
+                             <field name="interest" readonly="1"/>
+                             <field name="total" readonly="1"/>
+                         </tree>
+                    </field>
+                </xpath>
+                <field name="credit_note" position="after">
+                    <!-- <field name="total_hours" readonly="1"/> -->
+                    <field name="total_ot_hours" readonly="1"/>
+                    <field name="total_working_days" readonly="1"/>
+                    <field name="unpaid_leave_count" readonly="1"/>
+                    <field name="actual_working_days" readonly="1"/>
+                </field>
+            </field>
+        </record>
+
+        <!-- <record id="hr_contract_view_form_inherit_aces" model="ir.ui.view">
+            <field name="name">hr.contract.form</field>
+            <field name="model">hr.contract</field>
+            <field name="inherit_id" ref="hr_contract.hr_contract_view_form"/>
+            <field name="arch" type="xml">
+                <field name="wage" position="after">
+                    <field name="is_hourly_pay"/>
+                </field>
+            </field>
+        </record> -->
+        
+    </data>
+</odoo>

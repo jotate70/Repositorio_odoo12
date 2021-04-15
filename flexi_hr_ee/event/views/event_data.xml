@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<openerp>
+<data>
+
+        <record id="confirm_event_mail" model="mail.template">
+            <field name="name">Confirm Event Employee Email</field>
+            <field name="email_from">deep.acespritech@gmail.com</field>
+            <field name="subject">Event - ${object.name or 'n/a'}</field>
+            <field name="email_to">${ctx['emp_email']}</field>
+            <field name="auto_delete" eval="False"/>
+            <field name="model_id" ref="flexi_hr_ee.model_employee_event"/>
+            <field name="body_html"><![CDATA[
+                <p>Dear All,<br/>
+                We are excited to announced that ${object.name} Confirmed.<br/>
+                Event is start From ${object.start_date} To ${object.end_date}.<br/>
+                Thank You.
+            ]]>
+            </field>
+        </record>
+
+
+        <record id="cancel_event_mail" model="mail.template">
+            <field name="name">Cancel Event Employee Email</field>
+            <field name="email_from">deep.acespritech@gmail.com</field>
+            <field name="subject">Event - ${object.name or 'n/a'}</field>
+            <field name="email_to">${ctx['emp_email']}</field>
+            <field name="auto_delete" eval="False"/>
+            <field name="model_id" ref="flexi_hr_ee.model_wizard_cancel_event"/>
+            <field name="body_html"><![CDATA[
+                <p>Dear All,<br/>
+                Event ${ctx['event_name']} is cancelled due to ${object.name}.<br/>
+                Thank You.
+            ]]>
+            </field>
+        </record>
+
+        <record id="extend_event_mail" model="mail.template">
+            <field name="name">Extend Event Employee Email</field>
+            <field name="email_from">deep.acespritech@gmail.com</field>
+            <field name="subject">Event - ${object.name or 'n/a'}</field>
+            <field name="email_to">${ctx['emp_email']}</field>
+            <field name="auto_delete" eval="False"/>
+            <field name="model_id" ref="flexi_hr_ee.model_wizard_cancel_event"/>
+            <field name="body_html"><![CDATA[
+                <p>Dear All,<br/>
+                Event ${ctx['event_name']} is extended due to ${object.name}.<br/>
+                Thank You.
+            ]]>
+            </field>
+        </record>
+
+        <record id="emp_event_confirm_email" model="mail.template">
+            <field name="name">Employee Confirmation Email</field>
+            <field name="email_from">deep.acespritech@gmail.com</field>
+            <field name="subject">Event Confirmation Email</field>
+            <field name="email_to">${ctx['emp_email']}</field>
+            <field name="auto_delete" eval="False"/>
+            <field name="model_id" ref="flexi_hr_ee.model_employee_event_attendance"/>
+            <field name="body_html"><![CDATA[
+                <p>Dear All,<br/>
+                Thank You for Subscribe ${object.event_id.name} Event.
+            ]]>
+            </field>
+        </record>
+
+        <record id="employee_event_participant_mail" model="mail.template">
+            <field name="name">Employee Confirmation Email</field>
+            <field name="email_from">deep.acespritech@gmail.com</field>
+            <field name="subject">Event Confirmation Email</field>
+            <field name="email_to">${ctx['emp_email']}</field>
+            <field name="auto_delete" eval="False"/>
+            <field name="model_id" ref="flexi_hr_ee.model_employee_event_participant"/>
+            <field name="body_html"><![CDATA[
+                <p>Dear ${object.employee_id.name},<br/>
+                Thank You for Subscribe ${object.employee_event_id.name} Event.
+            ]]>
+            </field>
+        </record>
+
+        <record id="employee_join_event_mail" model="mail.template">
+            <field name="name">Employee Participant</field>
+            <field name="email_from">deep.acespritech@gmail.com</field>
+            <field name="subject">Employee Participant Email</field>
+            <field name="email_to">${ctx['user_email']}</field>
+            <field name="auto_delete" eval="False"/>
+            <field name="model_id" ref="flexi_hr_ee.model_wizard_employee_event_line"/>
+            <field name="body_html"><![CDATA[
+                <p>Dear All,<br/>
+                ${ctx['emp_name']} wants to join the ${object.employee_event_id.name} Event.
+            ]]>
+            </field>
+        </record>
+
+</data>
+</openerp>
