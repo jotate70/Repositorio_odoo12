@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+         <template id="report_custom_income_third_party" inherit_id="account.report_invoice_document">
+
+<!--            <xpath expr="//tr[@class='border-black o_total']" position="after">-->
+             <xpath expr="//div[@id='total']/div/table/tr[last()]" position="after">
+                        <t t-foreach="o.invoice_third_line_ids" t-as="linea">
+                             <tr class="border-black o_subtotal" style="">
+                                <td><span t-field="linea.name" /></td>
+                                <td class="text-right">
+                                    <span t-field="linea.amount"/>
+                                </td>
+                            </tr>
+                         </t>
+                        <tr class="border-black o_subtotal" style="color: #875a7b" id="total_tercero">
+                            <td><strong>Total Tercero</strong></td>
+                            <td class="text-right">
+                                <span t-field="o.amount_third"/>
+                            </td>
+                        </tr>
+
+             </xpath>
+             <xpath expr="//tr[@id='total_tercero']" >
+                  <tr style="color: #0051a9">
+                       <td><strong>Total Comprobante</strong></td>
+                        <td class="text-right">
+                            <span t-field="o.amount_general"
+                                t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                        </td>
+
+                    </tr>
+             </xpath>
+<!--            <xpath expr="//table[@class='table table-sm']" position="after">-->
+<!--                <t t-if="o.type in ('out_invoice','out_refund') ">-->
+<!--                    <table class="table table-sm" style="page-break-inside: avoid;">-->
+<!--                        <t t-foreach="o.invoice_third_line_ids" t-as="linea">-->
+<!--                             <tr class="border-black o_subtotal" style="">-->
+<!--                                <td><span t-field="linea.name" /></td>-->
+<!--                                <td class="text-right">-->
+<!--                                    <span t-field="linea.amount"/>-->
+<!--                                </td>-->
+<!--                            </tr>-->
+<!--                         </t>-->
+<!--                        <tr class="border-black o_subtotal" style="color: #875a7b" >-->
+<!--                            <td><strong>Total Tercero</strong></td>-->
+<!--                            <td class="text-right">-->
+<!--                                <span t-field="o.amount_third"/>-->
+<!--                            </td>-->
+<!--                        </tr>-->
+<!--                    </table>-->
+<!--                     <tr class="border-black o_total" style="color: #0051a9">-->
+<!--                           <td><strong>Total Comprobante</strong></td>-->
+<!--                            <td class="text-right o_price_total">-->
+<!--                                <span t-field="o.amount_general"-->
+<!--                                    t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>-->
+<!--                            </td>-->
+
+<!--                        </tr>-->
+
+<!--&lt;!&ndash;                    <tr class="border-black o_subtotal" style="color: #0051a9" >&ndash;&gt;-->
+<!--&lt;!&ndash;                        <td><strong>TOTAL COMPROBANTE:</strong></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                        <td class="text-right">&ndash;&gt;-->
+<!--&lt;!&ndash;                            <span t-field="o.amount_general"/>&ndash;&gt;-->
+<!--&lt;!&ndash;                        </td>&ndash;&gt;-->
+<!--&lt;!&ndash;                    </tr>&ndash;&gt;-->
+<!--                </t>-->
+
+
+<!--            </xpath>-->
+        </template>
+    </data>
+
+</odoo>
