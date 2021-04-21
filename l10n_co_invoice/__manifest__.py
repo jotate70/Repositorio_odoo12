@@ -8,7 +8,7 @@
     'description': """
         Modulo que agrega la funcion de ingresos para terceros
     """,
-    'author': "Jhonny Merino Samillán, Chiclayo-Perú",
+    'author': "Global BW SAS",
     'website': "http://www.yourcompany.com",
     'category': 'Uncategorized',
     'version': '0.1',
