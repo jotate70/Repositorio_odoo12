@@ -115,17 +115,19 @@ class GeneralLedgerXslx(models.AbstractModel):
         return 5
 
     def _generate_report_content(self, workbook, report):
+        # Display array header for move lines
+        self.write_array_header()
         # For each account
         for account in report.account_ids:
             # Write account title
-            self.write_array_title(account.code + ' - ' + account.name)
+            #self.write_array_title(account.code + ' - ' + account.name)
 
             if not account.partner_ids:
                 # Display array header for move lines
-                self.write_array_header()
+                #self.write_array_header()
 
                 # Display initial balance line for account
-                self.write_initial_balance(account)
+                #self.write_initial_balance(account)
 
                 # Display account move lines
                 for line in account.move_line_ids:
@@ -135,30 +137,30 @@ class GeneralLedgerXslx(models.AbstractModel):
                 # For each partner
                 for partner in account.partner_ids:
                     # Write partner title
-                    self.write_array_title(partner.name)
+                    #self.write_array_title(partner.name)
 
                     # Display array header for move lines
-                    self.write_array_header()
+                    #self.write_array_header()
 
                     # Display initial balance line for partner
-                    self.write_initial_balance(partner)
+                    #self.write_initial_balance(partner)
 
                     # Display account move lines
                     for line in partner.move_line_ids:
                         self.write_line(line)
 
                     # Display ending balance line for partner
-                    self.write_ending_balance(partner)
+                    #self.write_ending_balance(partner)
 
                     # Line break
-                    self.row_pos += 1
+                    #self.row_pos += 1
 
             # Display ending balance line for account
-            if not report.filter_partner_ids:
-                self.write_ending_balance(account)
+            #if not report.filter_partner_ids:
+                #self.write_ending_balance(account)
 
             # 2 lines break
-            self.row_pos += 2
+            #self.row_pos += 2
 
     def write_initial_balance(self, my_object):
         """Specific function to write initial balance for General Ledger"""
