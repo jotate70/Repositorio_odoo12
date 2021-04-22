@@ -156,7 +156,7 @@ class GeneralLedgerXslx(models.AbstractModel):
                     self.row_pos += 1
 
             # Display ending balance line for account
-            #if not report.filter_partner_ids:
+            if not report.filter_partner_ids:
                 self.write_ending_balance(account)
 
             # 2 lines break
