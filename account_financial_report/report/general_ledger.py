@@ -63,6 +63,9 @@ class GeneralLedgerReport(models.TransientModel):
         inverse_name='report_id'
     )
 
+    beginning_and_ending = fields.Boolean()
+    Show_taxes = fields.Boolean()
+
     # Compute of unaffected earnings account
     @api.depends('company_id')
     def _compute_unaffected_earnings_account(self):
