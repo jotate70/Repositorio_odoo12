@@ -96,6 +96,11 @@ class GeneralLedgerReportWizard(models.TransientModel):
         help='If set moves are not grouped by partner in any case'
     )
 
+    beginning_and_ending = fields.Boolean(string='Mostrar saldo inicial y final',
+                                          default='True')
+
+    Show_taxes = fields.Boolean(string='Mostrar solo impuestos y retenciones')
+
     def _init_date_from(self):
         """set start date to begin of current year if fiscal year running"""
         today = fields.Date.context_today(self)
@@ -235,7 +240,7 @@ class GeneralLedgerReportWizard(models.TransientModel):
         self.ensure_one()
         report_type = 'xlsx'
         return self._export(report_type)
-
+    # Nos permite usar las variables(objetos) en otras tablas o modelos
     def _prepare_report_general_ledger(self):
         self.ensure_one()
         return {
@@ -254,6 +259,7 @@ class GeneralLedgerReportWizard(models.TransientModel):
             'centralize': self.centralize,
             'fy_start_date': self.fy_start_date,
             'partner_ungrouped': self.partner_ungrouped,
+            'beginning_and_ending': self.beginning_and_ending,
         }
 
     def _export(self, report_type):

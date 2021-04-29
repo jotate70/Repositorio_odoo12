@@ -25,6 +25,11 @@
                                 <field name="centralize" nolabel="1" class="oe_inline"/>
                                 <label for="centralize" class="oe_inline"/>
                             </div>
+                            <label string=" " for="beginning_and_ending"/>
+                            <div>
+                                <field name="beginning_and_ending" nolabel="1" class="oe_inline"/>
+                                <label for="beginning_and_ending" class="oe_inline"/>
+                            </div>
                             <label string=" " for="hide_account_at_0"/>
                             <div>
                                 <field name="hide_account_at_0" nolabel="1" class="oe_inline"/>
@@ -44,6 +49,11 @@
                             <div>
                                 <field name="partner_ungrouped" nolabel="1" class="oe_inline"/>
                                 <label for="partner_ungrouped" class="oe_inline"/>
+                            </div>
+                            <label string=" " for="Show_taxes"/>
+                            <div>
+                                <field name="Show_taxes" nolabel="1" class="oe_inline"/>
+                                <label for="Show_taxes" class="oe_inline"/>
                             </div>
                         </group>
                     </group>
