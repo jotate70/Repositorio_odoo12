@@ -101,7 +101,7 @@ class AccountInvoice(models.Model):
             company_currency = self.company_id.currency_id
             if self.currency_id != company_currency:
                 rate_date = self._get_currency_rate_date() or fields.Date.today()
-                amount_currency = company_currency._convert(line.amount, self.currency_id, self.company_id,rate_date)
+                amount_currency = self.currency_id._convert(line.amount,company_currency, self.company_id,rate_date)
             else:
                 amount_currency = False
             move_line_debit_dict = {
