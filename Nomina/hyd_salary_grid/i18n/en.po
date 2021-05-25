@@ -1,0 +1,268 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* hyd_salary_grid
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 10.0-20170815\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-10-28 15:19+0000\n"
+"PO-Revision-Date: 2018-10-28 16:40+0100\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 2.0.6\n"
+"Last-Translator: \n"
+"Language: en\n"
+
+#. module: hyd_salary_grid
+#: model:ir.model.fields,field_description:hyd_salary_grid.field_hyd_salary_grid_grille_salaire_categ_id
+msgid "Categorie salariale"
+msgstr "salary category"
+
+#. module: hyd_salary_grid
+#: model:ir.model,name:hyd_salary_grid.model_hyd_salary_grid_categorie_salariale
+msgid "Catégorie de salaire"
+msgstr "salary category"
+
+#. module: hyd_salary_grid
+#: model:ir.ui.menu,name:hyd_salary_grid.menu_param_grille_salariale_categorie
+msgid "Catégories de grille salariale"
+msgstr "pay grid category"
+
+#. module: hyd_salary_grid
+#: model:ir.actions.act_window,name:hyd_salary_grid.categorie_salariale_action_view
+msgid "Catégories de salaire "
+msgstr "salary category"
+
+#. module: hyd_salary_grid
+#: model:ir.ui.view,arch_db:hyd_salary_grid.categorie_salariale_tree_view
+msgid "Catégories salariales"
+msgstr "salary categories"
+
+#. module: hyd_salary_grid
+#: model:ir.model.fields,field_description:hyd_salary_grid.field_hyd_salary_grid_categorie_salariale_code
+#: model:ir.model.fields,field_description:hyd_salary_grid.field_hyd_salary_grid_echelon_salariale_code
+#: model:ir.model.fields,field_description:hyd_salary_grid.field_hyd_salary_grid_grille_salaire_code
+msgid "Code"
+msgstr "Code"
+
+#. module: hyd_salary_grid
+#: model:ir.model,name:hyd_salary_grid.model_hr_contract_type
+msgid "Contract Type"
+msgstr "Contract Type"
+
+#. module: hyd_salary_grid
+#: model:ir.ui.view,arch_db:hyd_salary_grid.grille_salaire_form_view
+msgid "Contrats"
+msgstr "Contracs"
+
+#. module: hyd_salary_grid
+#: model:ir.model.fields,field_description:hyd_salary_grid.field_hyd_salary_grid_categorie_salariale_create_uid
+#: model:ir.model.fields,field_description:hyd_salary_grid.field_hyd_salary_grid_echelon_salariale_create_uid
+#: model:ir.model.fields,field_description:hyd_salary_grid.field_hyd_salary_grid_grille_salaire_create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: hyd_salary_grid
+#: model:ir.model.fields,field_description:hyd_salary_grid.field_hyd_salary_grid_categorie_salariale_create_date
+#: model:ir.model.fields,field_description:hyd_salary_grid.field_hyd_salary_grid_echelon_salariale_create_date
+#: model:ir.model.fields,field_description:hyd_salary_grid.field_hyd_salary_grid_grille_salaire_create_date
+msgid "Created on"
+msgstr ""
+
+#. module: hyd_salary_grid
+#: model:ir.model.fields,field_description:hyd_salary_grid.field_hyd_salary_grid_grille_salaire_name
+msgid "Description"
+msgstr ""
+
+#. module: hyd_salary_grid
+#: model:ir.model.fields,field_description:hyd_salary_grid.field_hyd_salary_grid_categorie_salariale_display_name
+#: model:ir.model.fields,field_description:hyd_salary_grid.field_hyd_salary_grid_echelon_salariale_display_name
+#: model:ir.model.fields,field_description:hyd_salary_grid.field_hyd_salary_grid_grille_salaire_display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: hyd_salary_grid
+#: model:ir.model.fields,field_description:hyd_salary_grid.field_hyd_salary_grid_grille_salaire_ech_id
+msgid "Echellon"
+msgstr "Level"
+
+#. module: hyd_salary_grid
+#: model:ir.ui.menu,name:hyd_salary_grid.menu_param_grille_salariale_echelon
+msgid "Echelon de grille salariale"
+msgstr "salary grid step"
+
+#. module: hyd_salary_grid
+#: model:ir.actions.act_window,name:hyd_salary_grid.echelon_salariale_action_view
+msgid "Echelon de salaire "
+msgstr "salary step"
+
+#. module: hyd_salary_grid
+#: model:ir.ui.view,arch_db:hyd_salary_grid.echelon_salariale_tree_view
+msgid "Echelon salariales"
+msgstr "salary step"
+
+#. module: hyd_salary_grid
+#: model:ir.model,name:hyd_salary_grid.model_hr_contract
+msgid "Employee Contract"
+msgstr ""
+
+#. module: hyd_salary_grid
+#: model:ir.ui.view,arch_db:hyd_salary_grid.categorie_salariale_form_view
+msgid "Formulaire des chèques"
+msgstr "check form"
+
+#. module: hyd_salary_grid
+#: model:ir.ui.view,arch_db:hyd_salary_grid.echelon_salariale_form_view
+msgid "Formulaire des echelons"
+msgstr "step form"
+
+#. module: hyd_salary_grid
+#: model:ir.ui.view,arch_db:hyd_salary_grid.grille_salaire_form_view
+msgid "Formulaire des grilles de salaire"
+msgstr "salary grid form"
+
+#. module: hyd_salary_grid
+#: model:ir.ui.menu,name:hyd_salary_grid.menu_param_grille_salariale_grille
+msgid "Grille des salaires"
+msgstr "salary grid"
+
+#. module: hyd_salary_grid
+#: model:ir.actions.act_window,name:hyd_salary_grid.grille_salaire_action_view
+msgid "Grille des salaires "
+msgstr "salary grid"
+
+#. module: hyd_salary_grid
+#: model:ir.model,name:hyd_salary_grid.model_hyd_salary_grid_grille_salaire
+#: model:ir.model.fields,field_description:hyd_salary_grid.field_hr_contract_grille_salaire
+msgid "Grille salariale"
+msgstr "salary grid"
+
+#. module: hyd_salary_grid
+#: model:ir.model.fields,field_description:hyd_salary_grid.field_hr_contract_type_grilles_salaire
+msgid "Grilles de ce type de contrat"
+msgstr "Grids of this type of this contract"
+
+#. module: hyd_salary_grid
+#: model:ir.ui.view,arch_db:hyd_salary_grid.grille_salaire_tree_view
+msgid "Grilles salariales"
+msgstr "salary grid"
+
+#. module: hyd_salary_grid
+#: model:ir.model.fields,field_description:hyd_salary_grid.field_hyd_salary_grid_categorie_salariale_id
+#: model:ir.model.fields,field_description:hyd_salary_grid.field_hyd_salary_grid_echelon_salariale_id
+#: model:ir.model.fields,field_description:hyd_salary_grid.field_hyd_salary_grid_grille_salaire_id
+msgid "ID"
+msgstr ""
+
+#. module: hyd_salary_grid
+#: model:ir.model.fields,field_description:hyd_salary_grid.field_hyd_salary_grid_categorie_salariale___last_update
+#: model:ir.model.fields,field_description:hyd_salary_grid.field_hyd_salary_grid_echelon_salariale___last_update
+#: model:ir.model.fields,field_description:hyd_salary_grid.field_hyd_salary_grid_grille_salaire___last_update
+msgid "Last Modified on"
+msgstr ""
+
+#. module: hyd_salary_grid
+#: model:ir.model.fields,field_description:hyd_salary_grid.field_hyd_salary_grid_categorie_salariale_write_uid
+#: model:ir.model.fields,field_description:hyd_salary_grid.field_hyd_salary_grid_echelon_salariale_write_uid
+#: model:ir.model.fields,field_description:hyd_salary_grid.field_hyd_salary_grid_grille_salaire_write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: hyd_salary_grid
+#: model:ir.model.fields,field_description:hyd_salary_grid.field_hyd_salary_grid_categorie_salariale_write_date
+#: model:ir.model.fields,field_description:hyd_salary_grid.field_hyd_salary_grid_echelon_salariale_write_date
+#: model:ir.model.fields,field_description:hyd_salary_grid.field_hyd_salary_grid_grille_salaire_write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: hyd_salary_grid
+#: model:ir.model.fields,field_description:hyd_salary_grid.field_hyd_salary_grid_categorie_salariale_name
+#: model:ir.model.fields,field_description:hyd_salary_grid.field_hyd_salary_grid_echelon_salariale_name
+msgid "Libelle"
+msgstr "label"
+
+#. module: hyd_salary_grid
+#: model:ir.model.fields,field_description:hyd_salary_grid.field_hyd_salary_grid_grille_salaire_masse
+msgid "Masse de la grille"
+msgstr "Salary mass of the grid"
+
+#. module: hyd_salary_grid
+#: model:ir.model.fields,field_description:hyd_salary_grid.field_hyd_salary_grid_grille_salaire_num_ordre
+msgid "Numero d'ordre"
+msgstr "Sequence"
+
+#. module: hyd_salary_grid
+#: model:ir.model.fields,field_description:hyd_salary_grid.field_hyd_salary_grid_categorie_salariale_num_ordre
+#: model:ir.model.fields,field_description:hyd_salary_grid.field_hyd_salary_grid_echelon_salariale_num_ordre
+msgid "Numéro d'ordre"
+msgstr "Sequence"
+
+#. module: hyd_salary_grid
+#: model:ir.ui.menu,name:hyd_salary_grid.menu_param_grille_salariale
+msgid "Paramètres de la grille salariale"
+msgstr "salary grid settings"
+
+#. module: hyd_salary_grid
+#: model:ir.ui.view,arch_db:hyd_salary_grid.categorie_salariale_search_view
+msgid "Recherche de categorie salariale"
+msgstr "salary category search"
+
+#. module: hyd_salary_grid
+#: model:ir.ui.view,arch_db:hyd_salary_grid.echelon_salariale_search_view
+#: model:ir.ui.view,arch_db:hyd_salary_grid.grille_salaire_search_view
+msgid "Recherche de echelon salariale"
+msgstr "salary grid step search"
+
+#. module: hyd_salary_grid
+#: model:ir.ui.view,arch_db:hyd_salary_grid.grille_salaire_graph_view
+msgid "Repartition masse salariale"
+msgstr ""
+
+#. module: hyd_salary_grid
+#: model:ir.model.fields,field_description:hyd_salary_grid.field_hyd_salary_grid_grille_salaire_montant
+msgid "Salaire"
+msgstr "wage"
+
+#. module: hyd_salary_grid
+#: model:ir.model.fields,field_description:hyd_salary_grid.field_hyd_salary_grid_grille_salaire_types_contrat
+msgid "Type de contrat de cette grille"
+msgstr "Contract type of this grid"
+
+#. module: hyd_salary_grid
+#: model:ir.ui.view,arch_db:hyd_salary_grid.grille_salaire_form_view
+msgid "Types de contrat"
+msgstr "Contract type"
+
+#. module: hyd_salary_grid
+#: model:ir.model.fields,field_description:hyd_salary_grid.field_hyd_salary_grid_grille_salaire_contracts
+msgid "contracts"
+msgstr ""
+
+#. module: hyd_salary_grid
+#: model:ir.model.fields,help:hyd_salary_grid.field_hyd_salary_grid_grille_salaire_contracts
+msgid "contrats dans cette grille"
+msgstr "contracts linked to this grid"
+
+#. module: hyd_salary_grid
+#: model:ir.model.fields,help:hyd_salary_grid.field_hr_contract_grille_salaire
+msgid "grille salariale de ce contrat"
+msgstr "salary grid of this contract"
+
+#. module: hyd_salary_grid
+#: model:ir.model.fields,help:hyd_salary_grid.field_hr_contract_type_grilles_salaire
+msgid "grilles prises en charge par ce type de contrat"
+msgstr "salary grid available for this contrac type"
+
+#. module: hyd_salary_grid
+#: model:ir.model,name:hyd_salary_grid.model_hyd_salary_grid_echelon_salariale
+msgid "hyd_salary_grid.echelon_salariale"
+msgstr ""
+
+#. module: hyd_salary_grid
+#: model:ir.model.fields,help:hyd_salary_grid.field_hyd_salary_grid_grille_salaire_types_contrat
+msgid "type de contrat prenant en charge cette grille"
+msgstr "contract type available for this grid"
