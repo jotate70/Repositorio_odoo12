@@ -85,9 +85,15 @@ class HrContract(models.Model):
     )
 
     Rtfuente = fields.Monetary(
-        string='Ingreso laboral gravado en UVT',
+        string='Ingreso laboral gravado',
         help='Ingreso laboral gravado expresado en UVT'
     )
+
+    UVT = fields.Monetary(
+        string='Valor del UVT',
+        help='Ingreso laboral gravado expresado en UVT'
+    )
+
 
     @api.constrains('ip_wage_rate')
     def _check_ip_wage_rate(self):
