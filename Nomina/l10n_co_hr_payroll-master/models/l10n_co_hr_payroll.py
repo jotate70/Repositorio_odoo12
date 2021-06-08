@@ -68,6 +68,27 @@ class HrContract(models.Model):
         help='Si el rodamiento es prestacional, habilite.'
     )
 
+    entidad_prestamo = fields.Char(
+        string='Entidad del prestamo',
+        help='Ingrese la entidad del prestamo'
+    )
+
+    monto_prestamo = fields.Monetary(
+        string='Cuota',
+        help='Ingrese la cantidad'
+    )
+
+    periodo_pago = fields.Selection(
+        string='Periodo de pago del prestamo',
+        selection=[('1', 'Quincenal'),
+                   ('2', 'Mensual')]
+    )
+
+    Rtfuente = fields.Monetary(
+        string='Ingreso laboral gravado en UVT',
+        help='Ingreso laboral gravado expresado en UVT'
+    )
+
     @api.constrains('ip_wage_rate')
     def _check_ip_wage_rate(self):
         if self.filtered(lambda contract: contract.ip_wage_rate < 0 or contract.ip_wage_rate > 100):

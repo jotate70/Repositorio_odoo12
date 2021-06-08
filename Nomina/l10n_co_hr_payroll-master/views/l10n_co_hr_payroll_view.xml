@@ -46,6 +46,22 @@
                 <div class="o_row">
                     <field name="rodamiento_es_prestacional" nolabel="1" />
                 </div>
+                <label for="entidad_prestamo" />
+                <div class="o_row">
+                    <field name="entidad_prestamo" nolabel="1" />
+                </div>
+                <label for="monto_prestamo" />
+                <div class="o_row">
+                    <field name="monto_prestamo" nolabel="1" />
+                </div>
+                <label for="periodo_pago" />
+                <div class="o_row">
+                    <field name="periodo_pago" nolabel="1" />
+                </div>
+                <label for="Rtfuente" />
+                <div class="o_row">
+                    <field name="Rtfuente" nolabel="1" />
+                </div>
             </xpath>
         </field>
     </record>
