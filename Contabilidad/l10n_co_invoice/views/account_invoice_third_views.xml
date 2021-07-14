@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="account_income_third_party">
+            <field name="name">account.invoice.income_third_party</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <field name="payment_term_id" position="after">
+                    <field name="add_third" widget="boolean_toggle" attrs="{'invisible': [('type','in',('in_invoice','in_refund'))]}"/>
+                </field>
+<!--                <xpath expr="/form/sheet/notebook[1]" position="after">                     -->
+<!--                </xpath>-->
+
+                <field name="invoice_line_ids" position="after">
+                    <span style="color: #54cc93" attrs="{'invisible': [('add_third','=',False)]}" >
+                        <strong>Detalle de Ingreso para Tercero: </strong>
+                    </span>
+                    <field
+                            name="invoice_third_line_ids"
+                            nolabel="1"
+                            widget="section_and_note_one2many"
+                            mode="tree"
+                            context="{'default_invoice_id': id}"
+                            attrs="{'invisible': [('add_third','=',False)]}">
+                            <tree string="Detalle de ingreso para tercero" editable="bottom">
+                                <control>
+                                    <create string="Add a line"/>
+                                    <create string="Add a section" context="{'default_display_type': 'line_section'}"/>
+                                    <create string="Add a note" context="{'default_display_type': 'line_note'}"/>
+                                </control>
+                                <field name="sequence" widget="handle"/>
+                                <field name="product_id" domain="[('sale_ok','=',True)]"/>
+                                <field name="name" widget="section_and_note_text"/>
+                                <field name="account_credit_id"/>
+                                <field name="account_debit_id" invisible="1"/>
+                                <field name="display_type" invisible="1"/>
+                                <field name="company_id" invisible="1"/>
+                                <field name="currency_id" invisible="1"/>
+                                <field name="amount_signed" invisible="1"/>
+                                <field name="amount"/>
+                            </tree>
+                    </field>
+                </field>
+
+                <field name="amount_total" position="after">
+                    <field name="amount_third" class="oe_subtotal_footer_separator" style="color: #875a7b" attrs="{'invisible': [('add_third','=',False)]}" />
+                    <field name="amount_third_signed" invisible="1"/>
+                    <field name="amount_general" class="oe_subtotal_footer_separator" style="color: #0051a9" attrs="{'invisible': [('add_third','=',False)]}" />
+                </field>
+
+            </field>
+        </record>
+    </data>
+</odoo>
+
